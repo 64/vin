@@ -1,5 +1,8 @@
+#include <iostream> // Temporary
+
 #include "configreader.h"
 #include "trim.h"
+#include "errorcode.h"
 
 // TODO: Cross-platform method of specifying config location
 std::string ConfigReader::CONFIG_FILE { "vinc.conf" };
@@ -36,4 +39,16 @@ bool ConfigReader::load()
 void ConfigReader::error(ErrorCode err, const std::string& opt, const std::string& val)
 {
     // TODO: Cross platform method of notifying user of invalid option or value.
+    switch (err)
+    {
+        case ErrorCode::OPT:
+        {
+            std::cout << "Invalid option found: " << opt << std::endl;
+        } break;
+
+        case ErrorCode::VALUE:
+        {
+            std::cout << "Invalid Value '" << val << "' being assigned to option '" << opt << "'." << std::endl;
+        } break;
+    }
 }

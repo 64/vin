@@ -12,18 +12,26 @@ Options::Options()
     };
 }
 
-bool Options::validate(ValueType val_type, const std::string& val)
+bool Options::validate(ValueType val_type, std::string& val)
 {
     bool status = true;
     switch (val_type)
     {
         case ValueType::INT:
         {
-            bool valid { true };
+            bool dec { true };
+            bool hex { true };
+
             for (const auto digit : val)
-                if (!std::isxdigit(digit))
-                    valid = false;
-            status = valid ? true : false;
+                if (!std::isdigit(digit))
+                    dec = false;
+
+            if (val.size() > 2 && val[0] == '0' && std::tolower(val[1]) == 'x')
+                for (const auto digit : val.substr(2))
+                    if (!std::isxdigit(digit))
+                        hex = false;
+
+            status = (dec || hex) ? true : false;
         } break;
 
         case ValueType::COLOR:
@@ -39,7 +47,7 @@ bool Options::validate(ValueType val_type, const std::string& val)
 
         case ValueType::BOOL:
         {
-            std::transform(val.begin(), val.end(), val.begin(), tolower);
+            std::transform(val.begin(), val.end(), val.begin(), ::tolower);
             if (val != "true" && val != "false")
                 status = false;
         } break;
