@@ -7,12 +7,20 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
+void message_box(const std::string& title, const std::string& msg);
 
 constexpr unsigned int SCR_WIDTH = 800;
 constexpr unsigned int SCR_HEIGHT = 600;
 
 int main()
 {
+#ifdef __DEBUG__
+    std::cout << "VIN Editor Debug Build" << std::endl;
+    std::cout << "Compiled on " << __DATE__ << " at " << __TIME__ << std::endl;
+#endif
+
+    message_box("Crally", "This is a message box with X11");
+
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);

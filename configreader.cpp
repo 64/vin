@@ -21,6 +21,10 @@ bool ConfigReader::load()
         std::string line;
         while (std::getline(config, line))
         {
+#ifdef __DEBUG__
+            if (!line.empty())
+                std::cout << "Read option '" << line << "'" << std::endl;
+#endif
             auto eq = line.find('=');
             if (eq != std::string::npos)
             {
@@ -52,6 +56,11 @@ void ConfigReader::error(ErrorCode err, const std::string& opt, const std::strin
         case ErrorCode::VALUE:
         {
             std::cout << "Invalid Value '" << val << "' being assigned to option '" << opt << "'." << std::endl;
+        } break;
+
+        case ErrorCode::OK:
+        {
+            // Can't occur
         } break;
     }
 }
