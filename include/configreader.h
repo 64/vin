@@ -4,14 +4,19 @@
 #include <string>
 #include <fstream>
 
+#include "options.h"
+#include "errorcode.h"
+
 class ConfigReader
 {
 public:
     ConfigReader();
     bool load();
+    void error(ErrorCode err, const std::string& opt, const std::string& val);
 
 private:
     static std::string CONFIG_FILE;
+    Options options;
 
 };
 
