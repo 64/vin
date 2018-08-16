@@ -12,7 +12,7 @@ class ConfigReader
 public:
     ConfigReader();
     bool load();
-    void error(ErrorCode err, const std::string& opt, const std::string& val);
+    [[noreturn]] void error(ErrorCode err, const std::string& opt, const std::string& val);
 
 private:
     static std::string CONFIG_FILE;

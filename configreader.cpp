@@ -1,11 +1,13 @@
 #include <iostream> // Temporary
+#include <utility>
+#include <cstdlib>
 
 #include "configreader.h"
 #include "trim.h"
 #include "errorcode.h"
 
 // TODO: Cross-platform method of specifying config location
-std::string ConfigReader::CONFIG_FILE { "vinc.conf" };
+std::string ConfigReader::CONFIG_FILE { "vin.conf" };
 
 ConfigReader::ConfigReader()
 {
@@ -31,9 +33,13 @@ bool ConfigReader::load()
                 std::string opt = line.substr(0, eq);
                 std::string val = line.substr(eq + 1);
 
-                ErrorCode status = options.set_option(opt, val);
+                ErrorCode status = options.set_option(trim(opt), trim(val));
                 if (status != ErrorCode::OK)
                     error(status, opt, val);
+#ifdef __DEBUG__
+                else
+                    std::cout << "Loaded value '" << val << "' into option '" << opt << "'" << std::endl;
+#endif
             }
         }
     }
@@ -45,17 +51,18 @@ bool ConfigReader::load()
 
 void ConfigReader::error(ErrorCode err, const std::string& opt, const std::string& val)
 {
-    // TODO: Cross platform method of notifying user of invalid option or value.
+    void message_box(const std::string& title, const std::string& msg);
+
     switch (err)
     {
         case ErrorCode::OPT:
         {
-            std::cout << "Invalid option found: " << opt << std::endl;
+            message_box("Invalid Option", "Found invalid option '" + opt + "' in config.");
         } break;
 
         case ErrorCode::VALUE:
         {
-            std::cout << "Invalid Value '" << val << "' being assigned to option '" << opt << "'." << std::endl;
+            message_box("Invalid Value", "Invalid Value '" + val + "' being assigned to option '" + opt + "'.");
         } break;
 
         case ErrorCode::OK:
@@ -63,4 +70,6 @@ void ConfigReader::error(ErrorCode err, const std::string& opt, const std::strin
             // Can't occur
         } break;
     }
+
+    std::exit(EXIT_FAILURE);
 }

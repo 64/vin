@@ -5,6 +5,8 @@
 #include <cstdlib>
 #include <string>
 
+#include "configreader.h"
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 void message_box(const std::string& title, const std::string& msg);
@@ -19,7 +21,10 @@ int main()
     std::cout << "Compiled on " << __DATE__ << " at " << __TIME__ << std::endl;
 #endif
 
-    message_box("Crally", "This is a message box with X11");
+//    message_box("Crally", "This is a message box with X11");
+
+    ConfigReader config;
+    config.load();
 
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cctype>
+#include <iostream>
 
 #include "options.h"
 
@@ -28,8 +29,17 @@ bool valid_color(const std::string& val)
 
     try
     {
-        int col = std::stoi(val); // Maybe change for RGBA values
-        valid = (col >= 0x000000 && col <= 0xFFFFFF) ? true : false;
+        if (valid_number(val))
+        {
+            int col = std::stoi(val); // Maybe change for RGBA values
+            valid = (col >= 0x000000 && col <= 0xFFFFFF) ? true : false;
+            std::cout << col << std::endl;
+            std::cout << val << std::endl;
+        }
+        else
+        {
+            valid = false;
+        }
     }
     catch (std::invalid_argument&) { valid = false; }
 
@@ -77,12 +87,12 @@ bool Options::validate(ValueType val_type, const std::string& val)
 
 ErrorCode Options::set_option(const std::string& opt, const std::string& val)
 {
-    // Invalid Options
+    // Check Invalid Option
     if (value_map.find(opt) == value_map.end())
         return ErrorCode::OPT;
 
-    // Invalid Value
-    if (!validate(value_map[opt].first, value_map[opt].second))
+    // Check Invalid Value
+    if (!validate(value_map[opt].first, val))
         return ErrorCode::VALUE;
 
     // Set the option
