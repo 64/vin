@@ -17,7 +17,7 @@ constexpr unsigned int SCR_HEIGHT = 600;
 int main()
 {
 #ifdef __DEBUG__
-    std::cout << "VIN Editor Debug Build" << std::endl;
+    std::cout << "Vin Editor Debug Build" << std::endl;
     std::cout << "Compiled on " << __DATE__ << " at " << __TIME__ << std::endl;
 #endif
 
@@ -31,7 +31,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "VIN Editor", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Vin Editor", nullptr, nullptr);
     if (!window)
     {
         std::cout << "Failed to create GLFW window" << std::endl;

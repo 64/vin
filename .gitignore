@@ -5,6 +5,7 @@ CMakeCache.txt
 CMakeLists.txt.user
 *.autosave
 vin
+build/
 
 # Prerequisites
 *.d

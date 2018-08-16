@@ -5,15 +5,12 @@ project(vin)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D__DEBUG__")
 
-include_directories(${CMAKE_SOURCE_DIR}/include)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "Build GLFW examples")
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "Build GLFW tests")
+add_subdirectory("third_party/glfw")
 
-add_executable(${PROJECT_NAME} "main.cpp" "glad.c" "configreader.cpp" "options.cpp" "trim.cpp" "messagebox.cpp")
+file(GLOB SRCS "${CMAKE_SOURCE_DIR}/src/*.cpp")
+add_executable(vin ${SRCS} "${CMAKE_SOURCE_DIR}/third_party/glad/src/glad.c")
 
-if (WIN32)
-    target_link_libraries(vin ${CMAKE_CURRENT_SOURCE_DIR}/libglfw3.a)
-endif (WIN32)
-
-if (UNIX)
-    target_link_libraries(vin glfw X11 ${GLFW_LIBRARIES} ${CMAKE_DL_LIBS} ${X11_LIBRARIES})
-endif (UNIX)
-
+target_include_directories(vin PUBLIC "${CMAKE_SOURCE_DIR}/include" "${CMAKE_SOURCE_DIR}/third_party/glad/include")
+target_link_libraries(vin glfw)
