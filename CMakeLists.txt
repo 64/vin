@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.6)
 
-set(CMAKE_CXX_STANDARD 17)
+#set(CMAKE_CXX_STANDARD 17)
 project(vin)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D__DEBUG__")
@@ -11,6 +11,18 @@ add_subdirectory("third_party/glfw")
 
 file(GLOB SRCS "${CMAKE_SOURCE_DIR}/src/*.cpp")
 add_executable(vin ${SRCS} "${CMAKE_SOURCE_DIR}/third_party/glad/src/glad.c")
+
+if(WIN32)
+    set(ENV{FREETYPE_DIR} "${CMAKE_SOURCE_DIR}/third_party/freetype_win")
+
+    # The github repo doesn't have the binaries in quite the right place for us to use.
+    # We need to copy the libs from win64/freetype.* to just freetype.* before calling find_package.
+    if(NOT (EXISTS "${CMAKE_SOURCE_DIR}/third_party/freetype_win/freetype.dll" AND EXISTS "${CMAKE_SOURCE_DIR}/third_party/freetype_win/freetype.lib"))
+        file(COPY "${CMAKE_SOURCE_DIR}/third_party/freetype_win/win64/freetype.dll" DESTINATION "${CMAKE_SOURCE_DIR}/third_party/freetype_win")
+        file(COPY "${CMAKE_SOURCE_DIR}/third_party/freetype_win/win64/freetype.lib" DESTINATION "${CMAKE_SOURCE_DIR}/third_party/freetype_win")
+        message(STATUS "Successfully copied FreeType libraries")
+    endif()
+endif()
 
 find_package(Freetype REQUIRED)
 

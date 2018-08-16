@@ -1,3 +1,6 @@
 [submodule "third_party/glfw"]
 	path = third_party/glfw
 	url = https://github.com/glfw/glfw
+[submodule "third_party/freetype_win"]
+	path = third_party/freetype_win
+	url = https://github.com/ubawurinna/freetype-windows-binaries
