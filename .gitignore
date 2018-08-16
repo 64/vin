@@ -1,3 +1,11 @@
+Makefile
+cmake_install.cmake
+CMakeFiles/
+CMakeCache.txt
+CMakeLists.txt.user
+*.autosave
+vin
+
 # Prerequisites
 *.d
 
