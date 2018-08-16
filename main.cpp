@@ -11,16 +11,6 @@ void processInput(GLFWwindow *window);
 constexpr unsigned int SCR_WIDTH = 800;
 constexpr unsigned int SCR_HEIGHT = 600;
 
-class Config
-{
-public:
-
-private:
-
-};
-
-const std::string CONFIG_FILE { "vin.conf" };
-
 int main()
 {
     glfwInit();

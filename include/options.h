@@ -8,10 +8,6 @@
 
 class Options
 {
-public:
-    Options();
-    ErrorCode set_option(std::string& opt, std::string& val);
-
 private:
     enum class ValueType
     {
@@ -20,6 +16,11 @@ private:
         COLOR,
         STRING,
     };
+
+public:
+    Options();
+    ErrorCode set_option(const std::string& opt, const std::string& val);
+    bool validate(ValueType val_type, const std::string& val);
 
 private:
     std::unordered_map<std::string, std::pair<ValueType, std::string>> value_map;

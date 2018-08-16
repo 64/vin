@@ -28,10 +28,12 @@ bool ConfigReader::load()
         }
     }
 
+    config.close();
+
     return true;
 }
 
 void ConfigReader::error(ErrorCode err, const std::string& opt, const std::string& val)
 {
-    // TODO: Cross platform method of notifying user of invalue option or value.
+    // TODO: Cross platform method of notifying user of invalid option or value.
 }

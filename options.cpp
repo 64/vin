@@ -12,43 +12,51 @@ Options::Options()
     };
 }
 
-ErrorCode Options::set_option(std::string& opt, std::string& val)
+bool Options::validate(ValueType val_type, const std::string& val)
 {
-    if (value_map.find(opt) == value_map.end())
-        return ErrorCode::OPT;
-
-    switch (value_map[opt].first)
+    bool status = true;
+    switch (val_type)
     {
         case ValueType::INT:
         {
-            try { std::stoi(val); }
-            catch (std::invalid_argument&) { return ErrorCode::VALUE; }
+            bool valid { true };
+            for (const auto digit : val)
+                if (!std::isxdigit(digit))
+                    valid = false;
+            status = valid ? true : false;
         } break;
 
         case ValueType::COLOR:
         {
             try
             {
+                // Potentially change in future for RGBA values
                 int col = std::stoi(val);
-                if (col >= 0x000000 && col <= 0xFFFFFF)
-                    return ErrorCode::OK;
+                status = (col >= 0x000000 && col <= 0xFFFFFF) ? true : false;
             }
-            catch (std::invalid_argument&) { return ErrorCode::VALUE; }
+            catch (std::invalid_argument&) { status = false; }
         } break;
 
         case ValueType::BOOL:
         {
             std::transform(val.begin(), val.end(), val.begin(), tolower);
             if (val != "true" && val != "false")
-                return ErrorCode::VALUE;
-        } break;
-
-        case ValueType::STRING:
-        {
-            // Possibly check validity against option
-            return ErrorCode::OK;
+                status = false;
         } break;
     }
+
+    return status;
+}
+
+ErrorCode Options::set_option(const std::string& opt, const std::string& val)
+{
+    if (value_map.find(opt) == value_map.end())
+        return ErrorCode::OPT;
+
+    if (!validate(value_map[opt].first, value_map[opt].second))
+        return ErrorCode::VALUE;
+
+    value_map[opt].second = val;
 
     return ErrorCode::OK;
 }
