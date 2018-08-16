@@ -1,4 +1,5 @@
 // TODO: Fiz 80 issues and possibly convert to C++
+// TODO: OSX?
 #ifdef linux
 
 #include <X11/X.h>

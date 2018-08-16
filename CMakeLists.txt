@@ -12,5 +12,7 @@ add_subdirectory("third_party/glfw")
 file(GLOB SRCS "${CMAKE_SOURCE_DIR}/src/*.cpp")
 add_executable(vin ${SRCS} "${CMAKE_SOURCE_DIR}/third_party/glad/src/glad.c")
 
-target_include_directories(vin PUBLIC "${CMAKE_SOURCE_DIR}/include" "${CMAKE_SOURCE_DIR}/third_party/glad/include")
-target_link_libraries(vin glfw)
+find_package(Freetype REQUIRED)
+
+target_include_directories(vin PUBLIC "${CMAKE_SOURCE_DIR}/include" "${CMAKE_SOURCE_DIR}/third_party/glad/include" ${FREETYPE_INCLUDE_DIRS})
+target_link_libraries(vin glfw ${FREETYPE_LIBRARIES})
