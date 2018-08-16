@@ -14,20 +14,23 @@ ConfigReader::ConfigReader()
 
 bool ConfigReader::load()
 {
-    std::ifstream config { CONFIG_FILE };
+    std::ifstream config { CONFIG_FILE, std::ios_base::in };
     
-    std::string line;
-    while (std::getline(config, line))
+    if (config)
     {
-        auto eq = line.find('=');
-        if (eq != std::string::npos)
+        std::string line;
+        while (std::getline(config, line))
         {
-            std::string opt = line.substr(0, eq);
-            std::string val = line.substr(eq + 1);
+            auto eq = line.find('=');
+            if (eq != std::string::npos)
+            {
+                std::string opt = line.substr(0, eq);
+                std::string val = line.substr(eq + 1);
 
-            ErrorCode status = options.set_option(opt, val);
-            if (status != ErrorCode::OK)
-                error(status, opt, val);
+                ErrorCode status = options.set_option(opt, val);
+                if (status != ErrorCode::OK)
+                    error(status, opt, val);
+            }
         }
     }
 

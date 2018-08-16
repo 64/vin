@@ -3,6 +3,37 @@
 
 #include "options.h"
 
+bool valid_number(const std::string& val)
+{
+    bool dec { true };
+    bool hex { true };
+
+    for (const auto digit : val)
+        if (!std::isdigit(digit))
+            dec = false;
+
+    if (val.size() > 2 && val[0] == '0' && std::tolower(val[1]) == 'x')
+        for (const auto digit : val.substr(2))
+            if (!std::isxdigit(digit))
+                hex = false;
+
+    return (dec || hex);
+}
+
+bool valid_color(const std::string& val)
+{
+    bool valid { true };
+
+    try
+    {
+        int col = std::stoi(val); // Maybe change for RGBA values
+        valid = (col >= 0x000000 && col <= 0xFFFFFF) ? true : false;
+    }
+    catch (std::invalid_argument&) { valid = false; }
+
+    return valid;
+}
+
 Options::Options()
 {
     // Set defaults
@@ -12,51 +43,36 @@ Options::Options()
     };
 }
 
-bool Options::validate(ValueType val_type, std::string& val)
+bool Options::validate(ValueType val_type, const std::string& val)
 {
     bool status = true;
     switch (val_type)
     {
         case ValueType::INT:
         {
-            bool dec { true };
-            bool hex { true };
-
-            for (const auto digit : val)
-                if (!std::isdigit(digit))
-                    dec = false;
-
-            if (val.size() > 2 && val[0] == '0' && std::tolower(val[1]) == 'x')
-                for (const auto digit : val.substr(2))
-                    if (!std::isxdigit(digit))
-                        hex = false;
-
-            status = (dec || hex) ? true : false;
+            status = valid_number(val);
         } break;
 
         case ValueType::COLOR:
         {
-            try
-            {
-                // Potentially change in future for RGBA values
-                int col = std::stoi(val);
-                status = (col >= 0x000000 && col <= 0xFFFFFF) ? true : false;
-            }
-            catch (std::invalid_argument&) { status = false; }
+            status = valid_color(val);
         } break;
 
         case ValueType::BOOL:
         {
-            std::transform(val.begin(), val.end(), val.begin(), ::tolower);
-            if (val != "true" && val != "false")
-                status = false;
+            status = (val == "true" || val == "false" || val == "TRUE" || val == "FALSE") ? true : false;
+        } break;
+
+        case ValueType::STRING:
+        {
+            status = true; // No current way of checking a valid string value
         } break;
     }
 
     return status;
 }
 
-ErrorCode Options::set_option(const std::string& opt, std::string& val)
+ErrorCode Options::set_option(const std::string& opt, const std::string& val)
 {
     if (value_map.find(opt) == value_map.end())
         return ErrorCode::OPT;
