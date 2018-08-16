@@ -3,12 +3,23 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <string>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
 constexpr unsigned int SCR_WIDTH = 800;
 constexpr unsigned int SCR_HEIGHT = 600;
+
+class Config
+{
+public:
+
+private:
+
+};
+
+const std::string CONFIG_FILE { "vin.conf" };
 
 int main()
 {
@@ -17,7 +28,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "VIN Editor", nullptr, nullptr);
     if (!window)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
