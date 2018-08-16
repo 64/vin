@@ -8,10 +8,12 @@ bool valid_number(const std::string& val)
     bool dec { true };
     bool hex { true };
 
+    // Check if valid decimal number
     for (const auto digit : val)
         if (!std::isdigit(digit))
             dec = false;
 
+    // Check if valid hex number
     if (val.size() > 2 && val[0] == '0' && std::tolower(val[1]) == 'x')
         for (const auto digit : val.substr(2))
             if (!std::isxdigit(digit))
@@ -74,12 +76,15 @@ bool Options::validate(ValueType val_type, const std::string& val)
 
 ErrorCode Options::set_option(const std::string& opt, const std::string& val)
 {
+    // Invalid Options
     if (value_map.find(opt) == value_map.end())
         return ErrorCode::OPT;
 
+    // Invalid Value
     if (!validate(value_map[opt].first, value_map[opt].second))
         return ErrorCode::VALUE;
 
+    // Set the option
     value_map[opt].second = val;
 
     return ErrorCode::OK;
