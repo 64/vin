@@ -56,7 +56,7 @@ bool Options::validate(ValueType val_type, std::string& val)
     return status;
 }
 
-ErrorCode Options::set_option(const std::string& opt, const std::string& val)
+ErrorCode Options::set_option(const std::string& opt, std::string& val)
 {
     if (value_map.find(opt) == value_map.end())
         return ErrorCode::OPT;

@@ -19,7 +19,7 @@ private:
 
 public:
     Options();
-    ErrorCode set_option(const std::string& opt, const std::string& val);
+    ErrorCode set_option(const std::string& opt, std::string& val);
     bool validate(ValueType val_type, std::string& val);
 
 private:
