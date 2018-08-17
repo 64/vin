@@ -69,10 +69,11 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
         process_input(window);
 
-        renderer.draw();
+        // For now, this just draws a quad at the specified coordinate
+        renderer.draw_character(window, 'A', 500, 500);
 
         glfwSwapBuffers(window);
-        glfwPollEvents();
+        glfwWaitEvents();
     }
 
     FT_Done_FreeType(library);

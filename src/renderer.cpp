@@ -8,9 +8,12 @@ const char *vert_source =
 "#version 330 core\n"
 "layout (location = 0) in vec2 aPos;\n"
 "\n"
+"uniform vec2 scale;\n"
+"uniform vec2 offset;\n"
+"\n"
 "void main()\n"
 "{\n"
-"    gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0);\n"
+"    gl_Position = vec4((aPos * scale) + offset, 0.0, 1.0);\n"
 "}";
 
 const char *frag_source =
@@ -19,12 +22,21 @@ const char *frag_source =
 "\n"
 "void main()\n"
 "{\n"
-"    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+"    FragColor = vec4(0.0f, 0.5f, 0.2f, 1.0f);\n"
 "}";
 
+const float quad_vertices[] = {
+    0.0f, -1.0f,
+    0.0f,  0.0f,
+    1.0f,  0.0f,
+    1.0f,  0.0f,
+    1.0f, -1.0f,
+    0.0f, -1.0f
+};
 
 Renderer::Renderer()
 {
+    // TODO: OpenGL error checking with glGetError
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
     GLuint frag_shader = compile_shader(frag_source, GL_FRAGMENT_SHADER);
@@ -49,6 +61,19 @@ Renderer::Renderer()
     glUseProgram(program);
     glDeleteShader(frag_shader);
     glDeleteShader(vert_shader);
+
+    unsigned int vbo, vao;
+    glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vbo);
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
+    glEnableVertexAttribArray(0);
+
+    scale_uniform_location = glGetUniformLocation(program, "scale");
+    offset_uniform_location = glGetUniformLocation(program, "offset");
 }
 
 Renderer::~Renderer()
@@ -56,9 +81,19 @@ Renderer::~Renderer()
 
 }
 
-void Renderer::draw()
+void Renderer::draw_character(GLFWwindow *window, char c, unsigned int x, unsigned int y)
 {
+    int width, height;
+    glfwGetWindowSize(window, &width, &height);
 
+    float xratio = (float)x / (float)width;
+    float yratio = (float)y / (float)height;
+    float x_offset = (xratio - 0.5f) * 2;
+    float y_offset = -(yratio - 0.5f) * 2; // Flip y-axis so origin is top left
+
+    glUniform2f(scale_uniform_location, 0.2, 0.2); // TODO: Set scale somehow
+    glUniform2f(offset_uniform_location, x_offset, y_offset);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
 GLuint Renderer::compile_shader(const char *source, GLenum shader_type)
