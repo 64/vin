@@ -1,4 +1,4 @@
-#include "glad/glad.h"
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -8,6 +8,7 @@
 #include <string>
 
 #include "configreader.h"
+#include "renderer.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void process_input(GLFWwindow *window);
@@ -46,12 +47,13 @@ int main()
 
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSwapInterval(1);
 
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
     {
         std::cerr << "Failed to initialize GLAD" << std::endl;
         return EXIT_FAILURE;
-    }    
+    }
 
     FT_Library library;
     if (FT_Init_FreeType(&library))
@@ -60,12 +62,14 @@ int main()
         return EXIT_FAILURE;
     }
 
+    Renderer renderer;
+
     while (!glfwWindowShouldClose(window))
     {
+        glClear(GL_COLOR_BUFFER_BIT);
         process_input(window);
 
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        renderer.draw();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -86,5 +90,3 @@ void framebuffer_size_callback(GLFWwindow*, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
-
-
