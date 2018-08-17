@@ -14,3 +14,5 @@ mkdir build && cd build
 cmake ..
 make
 ```
+
+On Windows, make sure to build set the project to be 64-bit - if you're using Visual Studio 14 for example, use: `cmake -G "Visual Studio 14 2015 Win64" ..`.
