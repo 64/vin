@@ -5,12 +5,14 @@
 #include <GLFW/glfw3.h>
 #include <string>
 
+#include "rect.h"
+
 class Renderer
 {
 public:
 	Renderer();
 	~Renderer();
-	void draw_character(GLFWwindow *window, char c, unsigned int x, unsigned int y);
+	void draw_character(GLFWwindow *window, char c, unsigned int x, unsigned int y, const class Font &font);
 private:
 	GLuint compile_shader(const char *source, GLenum shader_type);
 

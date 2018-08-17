@@ -9,6 +9,7 @@
 
 #include "configreader.h"
 #include "renderer.h"
+#include "font.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void process_input(GLFWwindow *window);
@@ -63,14 +64,16 @@ int main()
     }
 
     Renderer renderer;
+    Font font(library, "/usr/share/fonts/TTF/DejaVuSansMono.ttf", 100);
 
     while (!glfwWindowShouldClose(window))
     {
         glClear(GL_COLOR_BUFFER_BIT);
         process_input(window);
 
-        // For now, this just draws a quad at the specified coordinate
-        renderer.draw_character(window, 'A', 500, 500);
+        renderer.draw_character(window, 'G', 500, 500, font);
+        renderer.draw_character(window, 'A', 600, 500, font);
+        renderer.draw_character(window, 'Y', 670, 500, font);
 
         glfwSwapBuffers(window);
         glfwWaitEvents();

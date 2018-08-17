@@ -1,4 +1,5 @@
 #include "renderer.h"
+#include "font.h"
 
 #include <iostream>
 
@@ -7,22 +8,30 @@ constexpr size_t LOG_LENGTH = 512;
 const char *vert_source =
 "#version 330 core\n"
 "layout (location = 0) in vec2 aPos;\n"
+"out vec2 TexCoords;\n"
 "\n"
 "uniform vec2 scale;\n"
 "uniform vec2 offset;\n"
 "\n"
 "void main()\n"
 "{\n"
+"    TexCoords = vec2(aPos.x, -aPos.y);\n"
 "    gl_Position = vec4((aPos * scale) + offset, 0.0, 1.0);\n"
 "}";
 
+// 0.0, 0.0 -> 0.0, 0.0
+// 0.0, -1.0 -> 0.0, 1.0
+
 const char *frag_source =
 "#version 330 core\n"
+"in vec2 TexCoords;\n"
 "out vec4 FragColor;\n"
 "\n"
+"uniform sampler2D text;\n"
 "void main()\n"
 "{\n"
-"    FragColor = vec4(0.0f, 0.5f, 0.2f, 1.0f);\n"
+"    vec4 alpha_sample = vec4(1.0f, 1.0f, 1.0f, texture(text, TexCoords).r);\n"
+"    FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f) * alpha_sample;\n"
 "}";
 
 const float quad_vertices[] = {
@@ -74,6 +83,10 @@ Renderer::Renderer()
 
     scale_uniform_location = glGetUniformLocation(program, "scale");
     offset_uniform_location = glGetUniformLocation(program, "offset");
+
+    // Enable alpha blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 Renderer::~Renderer()
@@ -81,18 +94,26 @@ Renderer::~Renderer()
 
 }
 
-void Renderer::draw_character(GLFWwindow *window, char c, unsigned int x, unsigned int y)
+void Renderer::draw_character(GLFWwindow *window, char c, unsigned int x, unsigned int y, const Font& font)
 {
+    // TODO: Cache width, height
     int width, height;
     glfwGetWindowSize(window, &width, &height);
+
+    Glyph glyph = font.get_glyph(c);
 
     float xratio = (float)x / (float)width;
     float yratio = (float)y / (float)height;
     float x_offset = (xratio - 0.5f) * 2;
     float y_offset = -(yratio - 0.5f) * 2; // Flip y-axis so origin is top left
 
-    glUniform2f(scale_uniform_location, 0.2, 0.2); // TODO: Set scale somehow
+    float x_scale = (float)glyph.width / (float)width * 2;
+    float y_scale = (float)glyph.height / (float)height * 2;
+
+    glUniform2f(scale_uniform_location, x_scale, y_scale); // TODO: Cache this since it rarely changes
     glUniform2f(offset_uniform_location, x_offset, y_offset);
+    
+    glBindTexture(GL_TEXTURE_2D, glyph.texture);
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
