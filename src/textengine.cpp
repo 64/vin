@@ -4,6 +4,7 @@
 class TextEngine
 {
 public:
+    TextEngine();
 
 private:
 

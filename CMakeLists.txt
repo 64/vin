@@ -27,11 +27,11 @@ if(WIN32)
     # The github repo doesn't have the binaries in quite the right place for us to use.
     # freetype.lib needs to be copied from win64/ so find_package can locate it.
     # freetype.dll needs to be copied to where the executable will be so it can be loaded at run time.
-    if(NOT (EXISTS "${CMAKE_BINARY_DIR}/freetype.dll" AND EXISTS "${CMAKE_SOURCE_DIR}/third_party/freetype_win/freetype.lib"))
+    # if(NOT (EXISTS "${CMAKE_BINARY_DIR}/freetype.dll" AND EXISTS "${CMAKE_SOURCE_DIR}/third_party/freetype_win/freetype.lib"))
         file(COPY "${CMAKE_SOURCE_DIR}/third_party/freetype_win/${FT_WIN_PREFIX}/freetype.dll" DESTINATION "${CMAKE_BINARY_DIR}")
         file(COPY "${CMAKE_SOURCE_DIR}/third_party/freetype_win/${FT_WIN_PREFIX}/freetype.lib" DESTINATION "${CMAKE_SOURCE_DIR}/third_party/freetype_win")
         message(STATUS "Successfully copied FreeType libraries")
-    endif()
+    # endif()
 endif()
 
 find_package(Freetype REQUIRED)

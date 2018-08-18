@@ -5,6 +5,7 @@
 #include "configreader.h"
 #include "trim.h"
 #include "errorcode.h"
+#include "util.h"
 
 // TODO: Cross-platform method of specifying config location
 std::string ConfigReader::CONFIG_FILE { "vin.conf" };
@@ -76,8 +77,6 @@ bool ConfigReader::load()
 
 void ConfigReader::error(ErrorCode err, const std::string& opt, const std::string& val)
 {
-    void message_box(const std::string& title, const std::string& msg);
-
     switch (err)
     {
         case ErrorCode::OPT:
