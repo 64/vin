@@ -92,14 +92,14 @@ Renderer::~Renderer()
 
 }
 
-void Renderer::draw_character(GLFWwindow *window, char c, unsigned int x, unsigned int y)
+long Renderer::draw_character(char c, unsigned int x, unsigned int y)
 {
     Glyph glyph = font_face.get_glyph(c);
     int xpos = x + glyph.bearingx;
     int ypos = y + glyph.height - glyph.bearingy;
 
-    float xratio = (float)x / (float)screen_width;
-    float yratio = (float)y / (float)screen_height;
+    float xratio = (float)xpos / (float)screen_width;
+    float yratio = (float)ypos / (float)screen_height;
     float x_offset = (xratio - 0.5f) * 2;
     float y_offset = -(yratio - 0.5f) * 2; // Flip y-axis so origin is top left
 
@@ -111,31 +111,15 @@ void Renderer::draw_character(GLFWwindow *window, char c, unsigned int x, unsign
     
     glBindTexture(GL_TEXTURE_2D, glyph.texture);
     glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    return glyph.advance;
 }
 
-void Renderer::draw_text(GLFWwindow *window, const std::string& text, unsigned int x, unsigned int y)
+void Renderer::draw_text(const std::string& text, unsigned int x, unsigned int y)
 {
     for (const auto ch : text)
     {
-        Glyph glyph = font_face.get_glyph(ch);
-        int xpos = x + glyph.bearingx;
-        int ypos = y + glyph.height - glyph.bearingy;
-
-        float xratio = (float)xpos / (float)screen_width;
-        float yratio = (float)ypos / (float)screen_height;
-        float x_offset = (xratio - 0.5f) * 2;
-        float y_offset = -(yratio - 0.5f) * 2; // Flip y-axis so origin is top left
-
-        float x_scale = (float)glyph.width / (float)screen_width * 2;
-        float y_scale = (float)glyph.height / (float)screen_height * 2;
-
-        glUniform2f(scale_uniform_location, x_scale, y_scale); // TODO: Cache this since it rarely changes
-        glUniform2f(offset_uniform_location, x_offset, y_offset);
-
-        glBindTexture(GL_TEXTURE_2D, glyph.texture);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-
-        x += (glyph.advance >> 6);
+        x += (draw_character(ch, x, y) >> 6);
     }
 }
 

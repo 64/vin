@@ -61,7 +61,7 @@ int main(int, char**)
         glClear(GL_COLOR_BUFFER_BIT);
         process_input(window);
 
-        renderer.draw_text(window, "The quick brown fox jumps over the lazy dog", 300, 300);
+        renderer.draw_text("The quick brown fox jumps over the lazy dog", 300, 300);
 
         glfwSwapBuffers(window);
         glfwWaitEvents();
