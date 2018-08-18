@@ -4,7 +4,7 @@
 
 #include <widgetframework/widget.h>
 
-void WidgetBase::draw()
+void WidgetBase::draw() const
 {
 }
 

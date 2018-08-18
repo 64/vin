@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <string>
 
-#include "rect.h"
+#include "util/rect.h"
 
 class Renderer
 {
