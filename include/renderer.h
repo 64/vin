@@ -10,13 +10,13 @@
 class Renderer
 {
 public:
-	Renderer();
+    Renderer();
 	~Renderer();
-	void draw_character(GLFWwindow *window, char c, unsigned int x, unsigned int y, const class Font &font);
+    void draw_character(GLFWwindow *window, char c, unsigned int x, unsigned int y, const class Font &font);
 private:
 	GLuint compile_shader(const char *source, GLenum shader_type);
 
-	GLint scale_uniform_location, offset_uniform_location;
+    GLint scale_uniform_location, offset_uniform_location;
 };
 
 #endif

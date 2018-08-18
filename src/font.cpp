@@ -1,15 +1,14 @@
+#include <iostream>
+
 #include "font.h"
 
-#include <iostream>
+[[noreturn]] void error(const std::string& msg);
 
 Font::Font(FT_Library& library, const std::string& path, unsigned int height)
 {
     FT_Face face;
     if (FT_New_Face(library, path.c_str(), 0, &face))
-    {
-        std::cerr << "Failed to load font from path: " << path << std::endl;
-        std::exit(EXIT_FAILURE);
-    }
+        error("Failed to load font from path: " + path);
 
     FT_Set_Pixel_Sizes(face, 0, height);
 
@@ -19,10 +18,7 @@ Font::Font(FT_Library& library, const std::string& path, unsigned int height)
     for (unsigned char c = 0; c < 128; c++)
     {
         if (FT_Load_Char(face, c, FT_LOAD_RENDER))
-        {
-            std::cerr << "Failed to load font character '" << c << "' from path: " << path << std::endl;
-            std::exit(EXIT_FAILURE);
-        }
+            error("Failed to load font character '" + std::string{static_cast<char>(c)} + "' from path: " + path);
 
         GLuint texture;
         glGenTextures(1, &texture);
@@ -44,7 +40,7 @@ Font::Font(FT_Library& library, const std::string& path, unsigned int height)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        glyphs.emplace(c, Glyph { texture, face->glyph->bitmap.width, face->glyph->bitmap.rows });
+        glyphs.emplace(c, Glyph { texture, face->glyph->bitmap.width, face->glyph->bitmap.rows, face->glyph->bitmap_left, face->glyph->bitmap_top, face->glyph->advance.x });
     }
 
     FT_Done_Face(face);

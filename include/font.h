@@ -11,13 +11,14 @@ struct Glyph
 {
     GLuint texture;
     unsigned int height, width;
+    int bearingx, bearingy;
+    long advance;
 };
 
 class Font
 {
 public:
     Font(FT_Library& library, const std::string& path, unsigned int height);
-
     Glyph get_glyph(char c) const;
 
 private:

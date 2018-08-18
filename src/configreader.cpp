@@ -14,6 +14,11 @@ ConfigReader::ConfigReader()
     
 }
 
+std::string ConfigReader::option(const std::string& opt)
+{
+    return options.get_value(opt);
+}
+
 bool ConfigReader::load()
 {
     std::ifstream config { CONFIG_FILE, std::ios_base::in };
