@@ -28,7 +28,7 @@ public:
 private:
     Renderer& renderer;
     Cursor cur;
-    std::string buffer;
+    std::string buffer; // This will be replaced by the file buffers and is only for the typing test
 
 };
 
