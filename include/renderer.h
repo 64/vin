@@ -7,11 +7,12 @@
 
 #include "rect.h"
 #include "fontface.h"
+#include "util.h"
 
 class Renderer
 {
 public:
-    Renderer(const FontFace& font, const int& width, const int& height, int color);
+    Renderer(const FontFace& font, const int& width, const int& height, int bg_color, int fg_color);
 	~Renderer();
     long draw_character(char c, int x, int y);
     void draw_text(const std::string& text, int x, int y);
@@ -22,6 +23,8 @@ private:
     const FontFace& font_face;
     const int& screen_width;
     const int& screen_height;
+    Vec3f bg_color;
+    Vec3f fg_color;
 };
 
 #endif
