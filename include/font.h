@@ -17,7 +17,6 @@ class Font
 {
 public:
     Font(FT_Library& library, const std::string& path, unsigned int height);
-
     Glyph get_glyph(char c) const;
 
 private:

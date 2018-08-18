@@ -1,6 +1,6 @@
-#include "font.h"
-
 #include <iostream>
+
+#include "font.h"
 
 Font::Font(FT_Library& library, const std::string& path, unsigned int height)
 {

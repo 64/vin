@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cctype>
 #include <iostream>
+#include <cassert>
 
 #include "options.h"
 
@@ -53,7 +54,14 @@ Options::Options()
     {
         {"bg_color",     {ValueType::COLOR, "0x4A6F6F"}},
         {"line_numbers", {ValueType::BOOL, "FALSE"}},
+        {"font_path",    {ValueType::STRING, "/usr/share/fonts/TTF/DejaVuSansMono.ttf"}},
     };
+}
+
+std::string Options::get_value(const std::string& opt)
+{
+    assert(value_map.find(opt) != value_map.end());
+    return value_map[opt].second;
 }
 
 bool Options::validate(ValueType val_type, const std::string& val)

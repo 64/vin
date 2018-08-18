@@ -12,6 +12,7 @@ class ConfigReader
 public:
     ConfigReader();
     bool load();
+    std::string option(const std::string& opt);
     [[noreturn]] void error(ErrorCode err, const std::string& opt, const std::string& val);
 
 private:

@@ -64,7 +64,7 @@ int main()
     }
 
     Renderer renderer;
-    Font font(library, "/usr/share/fonts/TTF/DejaVuSansMono.ttf", 100);
+    Font font(library, config.option("font_path"), 100);
 
     while (!glfwWindowShouldClose(window))
     {
