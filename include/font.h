@@ -10,8 +10,10 @@
 struct Glyph
 {
     GLuint texture;
-    unsigned int width, height;
-    int bearingx, bearingy;
+    unsigned int width;
+    unsigned int height;
+    int bearingx;
+    int bearingy;
     long advance;
 };
 
@@ -20,6 +22,9 @@ class Font
 public:
     Font(FT_Library& library, const std::string& path, unsigned int height);
     Glyph get_glyph(char c) const;
+
+public:
+    int max_height = 0; // Hack to fix font alignment
 
 private:
     std::unordered_map<char, Glyph> glyphs;    

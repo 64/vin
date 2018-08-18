@@ -19,9 +19,6 @@ const char *vert_source =
 "    gl_Position = vec4((aPos * scale) + offset, 0.0, 1.0);\n"
 "}";
 
-// 0.0, 0.0 -> 0.0, 0.0
-// 0.0, -1.0 -> 0.0, 1.0
-
 const char *frag_source =
 "#version 330 core\n"
 "in vec2 TexCoords;\n"
@@ -127,7 +124,7 @@ void Renderer::draw_text(GLFWwindow *window, const std::string& text, unsigned i
     {
         Glyph glyph = font.get_glyph(ch);
         int xpos = x + glyph.bearingx;
-        int ypos = y + (glyph.height - glyph.bearingy);
+        int ypos = y + (glyph.height - glyph.bearingy) + (font.max_height - glyph.height);
 
         float xratio = (float)xpos / (float)width;
         float yratio = (float)ypos / (float)height;
