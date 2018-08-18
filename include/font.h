@@ -24,7 +24,7 @@ public:
     Glyph get_glyph(char c) const;
 
 public:
-    int max_height = 0; // Hack to fix font alignment
+    unsigned int max_height = 0; // Hack to fix font alignment
 
 private:
     std::unordered_map<char, Glyph> glyphs;    

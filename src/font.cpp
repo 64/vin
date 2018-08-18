@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 
 #include "font.h"
 
@@ -40,7 +41,7 @@ Font::Font(FT_Library& library, const std::string& path, unsigned int height)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        max_height = face->glyph->bitmap.rows > max_height ? face->glyph->bitmap.rows : max_height;
+        max_height = std::max(face->glyph->bitmap.rows, max_height);
 
         glyphs.emplace(c, Glyph { texture, face->glyph->bitmap.width, face->glyph->bitmap.rows, face->glyph->bitmap_left, face->glyph->bitmap_top, face->glyph->advance.x });
     }
