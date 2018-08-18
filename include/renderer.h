@@ -17,8 +17,8 @@ public:
     void draw_text(const std::string& text, int x, int y);
 
 private:
-	GLuint compile_shader(const char *source, GLenum shader_type);
-    GLint scale_uniform_location, offset_uniform_location;
+    GLuint compile_shader(const char *source, GLenum shader_type);
+    GLint scale_uniform_location, offset_uniform_location, color_uniform_location;
     const FontFace& font_face;
     const int& screen_width;
     const int& screen_height;

@@ -26,10 +26,11 @@ static const char *frag_source =
 "out vec4 FragColor;\n"
 "\n"
 "uniform sampler2D text;\n"
+"uniform vec3 color;\n"
 "void main()\n"
 "{\n"
 "    vec4 alpha_sample = vec4(1.0f, 1.0f, 1.0f, texture(text, TexCoords).r);\n"
-"    FragColor = vec4(1.0f) * alpha_sample;\n"
+"    FragColor = vec4(color, 1.0f) * alpha_sample;\n"
 "}";
 
 const float quad_vertices[] = {
@@ -83,6 +84,7 @@ Renderer::Renderer(const FontFace& font, const int& width, const int& height, in
 
     scale_uniform_location = glGetUniformLocation(program, "scale");
     offset_uniform_location = glGetUniformLocation(program, "offset");
+    color_uniform_location = glGetUniformLocation(program, "color");
 
     // Enable alpha blending
     glEnable(GL_BLEND);
@@ -110,6 +112,7 @@ long Renderer::draw_character(char c, int x, int y)
 
     glUniform2f(scale_uniform_location, x_scale, y_scale); // TODO: Cache this since it rarely changes
     glUniform2f(offset_uniform_location, x_offset, y_offset);
+    glUniform3f(color_uniform_location, 1.0f, 1.0f, 1.0f);
     
     glBindTexture(GL_TEXTURE_2D, glyph.texture);
     glDrawArrays(GL_TRIANGLES, 0, 6);
