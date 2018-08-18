@@ -53,15 +53,15 @@ int main(int, char**)
     if (FT_Init_FreeType(&library))
         error("Failed to initialize Freetype");
 
-    Renderer renderer;
     FontFace font(library, config.option("font_path"), 14);
+    Renderer renderer{font};
 
     while (!glfwWindowShouldClose(window))
     {
         glClear(GL_COLOR_BUFFER_BIT);
         process_input(window);
 
-        renderer.draw_text(window, "The quick brown fox jumps over the lazy dog", 300, 300, font);
+        renderer.draw_text(window, "The quick brown fox jumps over the lazy dog", 300, 300);
 
         glfwSwapBuffers(window);
         glfwWaitEvents();

@@ -26,9 +26,6 @@ public:
 
     static std::string get_system_font(const std::string& font_name);
 
-public:
-    unsigned int max_height = 0; // Hack to fix font alignment
-
 private:
     std::unordered_map<char, Glyph> glyphs;    
 };

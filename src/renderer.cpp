@@ -40,7 +40,7 @@ const float quad_vertices[] = {
     0.0f, 0.0f
 };
 
-Renderer::Renderer()
+Renderer::Renderer(const FontFace& font) : font_face(font)
 {
     // TODO: OpenGL error checking with glGetError
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -91,13 +91,15 @@ Renderer::~Renderer()
 
 }
 
-void Renderer::draw_character(GLFWwindow *window, char c, unsigned int x, unsigned int y, const FontFace& font)
+void Renderer::draw_character(GLFWwindow *window, char c, unsigned int x, unsigned int y)
 {
     // TODO: Cache width, height
     int width, height;
     glfwGetWindowSize(window, &width, &height);
 
-    Glyph glyph = font.get_glyph(c);
+    Glyph glyph = font_face.get_glyph(c);
+    int xpos = x + glyph.bearingx;
+    int ypos = y + glyph.height - glyph.bearingy;
 
     float xratio = (float)x / (float)width;
     float yratio = (float)y / (float)height;
@@ -114,7 +116,7 @@ void Renderer::draw_character(GLFWwindow *window, char c, unsigned int x, unsign
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
-void Renderer::draw_text(GLFWwindow *window, const std::string& text, unsigned int x, unsigned int y, const FontFace& font)
+void Renderer::draw_text(GLFWwindow *window, const std::string& text, unsigned int x, unsigned int y)
 {
     // TODO: Cache width, height
     int width, height;
@@ -122,7 +124,7 @@ void Renderer::draw_text(GLFWwindow *window, const std::string& text, unsigned i
 
     for (const auto ch : text)
     {
-        Glyph glyph = font.get_glyph(ch);
+        Glyph glyph = font_face.get_glyph(ch);
         int xpos = x + glyph.bearingx;
         int ypos = y + glyph.height - glyph.bearingy;
 
