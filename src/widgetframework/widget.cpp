@@ -4,7 +4,6 @@
 
 #include <widgetframework/widget.h>
 
-
 void WidgetBase::draw()
 {
 }
@@ -13,27 +12,27 @@ void WidgetBase::update()
 {
 }
 
-void WidgetBase::on_resize(int width, int height)
+void WidgetBase::on_resize(const Vector2i& size)
 {
-    m_size = std::make_pair(width, height);
+    m_size = size;
 }
 
-void WidgetBase::on_position_changed(int x, int y)
+void WidgetBase::on_position_changed(const Vector2i& position)
 {
-    m_position = std::make_pair(x, y);
+    m_position = position;
 }
 
 void WidgetBase::on_event()
 {
 }
 
-std::pair<int, int> WidgetBase::get_position()
+Vector2i WidgetBase::get_position() const
 {
     return m_position;
 }
 
 
-std::pair<int, int> WidgetBase::get_size()
+Vector2i WidgetBase::get_size() const
 {
     return m_size;
 }
