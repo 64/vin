@@ -1,7 +1,6 @@
 #include <iostream> // Temporary
 #include <utility>
 #include <cstdlib>
-#include <type_traits>
 
 #include "configreader.h"
 #include "trim.h"
