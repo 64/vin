@@ -6,6 +6,7 @@ CMakeLists.txt.user
 *.autosave
 vin
 build/
+.vscode/
 
 # Prerequisites
 *.d

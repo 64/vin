@@ -6,6 +6,7 @@
 #include FT_FREETYPE_H
 
 #include <unordered_map>
+#include <string>
 
 struct Glyph
 {
@@ -22,6 +23,8 @@ class Font
 public:
     Font(FT_Library& library, const std::string& path, unsigned int height);
     Glyph get_glyph(char c) const;
+
+    static std::string get_system_font(const std::string& font_name);
 
 public:
     unsigned int max_height = 0; // Hack to fix font alignment
