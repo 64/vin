@@ -112,7 +112,7 @@ long Renderer::draw_character(char c, int x, int y)
     glBindTexture(GL_TEXTURE_2D, glyph.texture);
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
-    return glyph.advance;
+    return glyph.advancex;
 }
 
 void Renderer::draw_text(const std::string& text, int x, int y)

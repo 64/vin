@@ -15,7 +15,7 @@ struct Glyph
     unsigned int height;
     int bearingx;
     int bearingy;
-    long advance;
+    long advancex;
     long advancey;
 };
 
