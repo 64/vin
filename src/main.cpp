@@ -14,11 +14,10 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void process_input(GLFWwindow *window);
 void message_box(const std::string& title, const std::string& msg);
-
 [[noreturn]] void error(const std::string& msg);
 
-int SCR_WIDTH = 800;
-int SCR_HEIGHT = 600;
+static int SCR_WIDTH = 800;
+static int SCR_HEIGHT = 600;
 
 int main(int, char**)
 {
@@ -53,7 +52,7 @@ int main(int, char**)
     if (FT_Init_FreeType(&library))
         error("Failed to initialize Freetype");
 
-    FontFace font(library, config.option<std::string>("font_path"), 14);
+    FontFace font(library, config.option<std::string>("font_path"), config.option<int>("font_size"));
     Renderer renderer{font, SCR_WIDTH, SCR_HEIGHT};
 
     while (!glfwWindowShouldClose(window))
@@ -61,7 +60,16 @@ int main(int, char**)
         glClear(GL_COLOR_BUFFER_BIT);
         process_input(window);
 
-        renderer.draw_text("The quick brown fox jumps over the lazy dog", 300, 300);
+        renderer.draw_text("#version 330 core\n"
+                           "in vec2 TexCoords;\n"
+                           "out vec4 FragColor;\n"
+                           "\n"
+                           "uniform sampler2D text;\n"
+                           "void main()\n"
+                           "{\n"
+                           "    vec4 alpha_sample = vec4(1.0f, 1.0f, 1.0f, texture(text, TexCoords).r);\n"
+                           "    FragColor = vec4(1.0f) * alpha_sample;\n"
+                           "}", 10, 20);
 
         glfwSwapBuffers(window);
         glfwWaitEvents();
@@ -69,6 +77,7 @@ int main(int, char**)
 
     FT_Done_FreeType(library);
     glfwTerminate();
+
     return EXIT_SUCCESS;
 }
 

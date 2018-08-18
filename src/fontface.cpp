@@ -102,7 +102,7 @@ std::string get_font_path(const std::string& title)
 
 [[noreturn]] void error(const std::string& msg);
 
-FontFace::FontFace(FT_Library& library, const std::string& path, unsigned int height)
+FontFace::FontFace(FT_Library& library, const std::string& path, unsigned int height) : height(height)
 {
     FT_Face face;
     if (FT_New_Face(library, path.c_str(), 0, &face))
@@ -149,10 +149,15 @@ FontFace::FontFace(FT_Library& library, const std::string& path, unsigned int he
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        glyphs.emplace(c, Glyph { texture, face->glyph->bitmap.width, face->glyph->bitmap.rows, face->glyph->bitmap_left, face->glyph->bitmap_top, face->glyph->advance.x });
+        glyphs.emplace(c, Glyph { texture, face->glyph->bitmap.width, face->glyph->bitmap.rows, face->glyph->bitmap_left, face->glyph->bitmap_top, face->glyph->advance.x, face->glyph->advance.y });
     }
 
     FT_Done_Face(face);
+}
+
+int FontFace::font_height() const
+{
+    return height;
 }
 
 Glyph FontFace::get_glyph(char c) const

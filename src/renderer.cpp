@@ -5,7 +5,7 @@
 
 constexpr size_t LOG_LENGTH = 512;
 
-const char *vert_source =
+static const char *vert_source =
 "#version 330 core\n"
 "layout (location = 0) in vec2 aPos;\n"
 "out vec2 TexCoords;\n"
@@ -19,7 +19,7 @@ const char *vert_source =
 "    gl_Position = vec4((aPos * scale) + offset, 0.0, 1.0);\n"
 "}";
 
-const char *frag_source =
+static const char *frag_source =
 "#version 330 core\n"
 "in vec2 TexCoords;\n"
 "out vec4 FragColor;\n"
@@ -59,7 +59,7 @@ Renderer::Renderer(const FontFace& font, const int& width, const int& height)
     glGetProgramiv(program, GL_LINK_STATUS, &result);
     if (!result)
     {
-        glGetProgramInfoLog(program, LOG_LENGTH, NULL, info_log);
+        glGetProgramInfoLog(program, LOG_LENGTH, nullptr, info_log);
         std::cerr << "Failed to link shader program:" << std::endl;
         std::cerr << info_log << std::endl;
         std::exit(EXIT_FAILURE);
@@ -76,7 +76,7 @@ Renderer::Renderer(const FontFace& font, const int& width, const int& height)
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
     glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr);
     glEnableVertexAttribArray(0);
 
     scale_uniform_location = glGetUniformLocation(program, "scale");
@@ -92,19 +92,19 @@ Renderer::~Renderer()
 
 }
 
-long Renderer::draw_character(char c, unsigned int x, unsigned int y)
+long Renderer::draw_character(char c, int x, int y)
 {
     Glyph glyph = font_face.get_glyph(c);
     int xpos = x + glyph.bearingx;
     int ypos = y + glyph.height - glyph.bearingy;
 
-    float xratio = (float)xpos / (float)screen_width;
-    float yratio = (float)ypos / (float)screen_height;
+    float xratio = static_cast<float>(xpos) / static_cast<float>(screen_width);
+    float yratio = static_cast<float>(ypos) / static_cast<float>(screen_height);
     float x_offset = (xratio - 0.5f) * 2;
     float y_offset = -(yratio - 0.5f) * 2; // Flip y-axis so origin is top left
 
-    float x_scale = (float)glyph.width / (float)screen_width * 2;
-    float y_scale = (float)glyph.height / (float)screen_height * 2;
+    float x_scale = static_cast<float>(glyph.width) / static_cast<float>(screen_width) * 2;
+    float y_scale = static_cast<float>(glyph.height) / static_cast<float>(screen_height) * 2;
 
     glUniform2f(scale_uniform_location, x_scale, y_scale); // TODO: Cache this since it rarely changes
     glUniform2f(offset_uniform_location, x_offset, y_offset);
@@ -115,16 +115,26 @@ long Renderer::draw_character(char c, unsigned int x, unsigned int y)
     return glyph.advance;
 }
 
-void Renderer::draw_text(const std::string& text, unsigned int x, unsigned int y)
+void Renderer::draw_text(const std::string& text, int x, int y)
 {
+    int old_x = x;
     for (const auto ch : text)
+    {
+        if (ch == '\n')
+        {
+            y += font_face.font_height();
+            x = old_x; // Temp until TextEngine is functional
+            continue;
+        }
+
         x += (draw_character(ch, x, y) >> 6);
+    }
 }
 
 GLuint Renderer::compile_shader(const char *source, GLenum shader_type)
 {
     GLuint shader = glCreateShader(shader_type);
-    glShaderSource(shader, 1, &source, NULL);
+    glShaderSource(shader, 1, &source, nullptr);
     glCompileShader(shader);
 
     GLint result;
@@ -132,7 +142,7 @@ GLuint Renderer::compile_shader(const char *source, GLenum shader_type)
     glGetShaderiv(shader, GL_COMPILE_STATUS, &result);
     if (!result)
     {
-        glGetShaderInfoLog(shader, LOG_LENGTH, NULL, info_log);
+        glGetShaderInfoLog(shader, LOG_LENGTH, nullptr, info_log);
         std::cerr << "Failed to compile " << (shader_type == GL_FRAGMENT_SHADER ? "fragment" : "vertex") << " shader:" << std::endl;
         std::cerr << info_log << std::endl;
         std::exit(EXIT_FAILURE);
