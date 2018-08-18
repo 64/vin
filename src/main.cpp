@@ -60,7 +60,8 @@ int main(int, char**)
         glClear(GL_COLOR_BUFFER_BIT);
         process_input(window);
 
-        renderer.draw_character(window, 'c', 100, 100, font);
+//        renderer.draw_character(window, 'c', 100, 100, font);
+        renderer.draw_text(window, "Crally", 100, 100, font);
 
         glfwSwapBuffers(window);
         glfwWaitEvents();

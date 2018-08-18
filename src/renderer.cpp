@@ -117,6 +117,36 @@ void Renderer::draw_character(GLFWwindow *window, char c, unsigned int x, unsign
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
+void Renderer::draw_text(GLFWwindow *window, const std::string& text, unsigned int x, unsigned int y, const Font& font)
+{
+    // TODO: Cache width, height
+    int width, height;
+    glfwGetWindowSize(window, &width, &height);
+
+    for (const auto ch : text)
+    {
+        Glyph glyph = font.get_glyph(ch);
+        int xpos = x + glyph.bearingx;
+        int ypos = y + (glyph.height - glyph.bearingy);
+
+        float xratio = (float)xpos / (float)width;
+        float yratio = (float)ypos / (float)height;
+        float x_offset = (xratio - 0.5f) * 2;
+        float y_offset = -(yratio - 0.5f) * 2; // Flip y-axis so origin is top left
+
+        float x_scale = (float)glyph.width / (float)width * 2;
+        float y_scale = (float)glyph.height / (float)height * 2;
+
+        glUniform2f(scale_uniform_location, x_scale, y_scale); // TODO: Cache this since it rarely changes
+        glUniform2f(offset_uniform_location, x_offset, y_offset);
+
+        glBindTexture(GL_TEXTURE_2D, glyph.texture);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        x += (glyph.advance >> 6);
+    }
+}
+
 GLuint Renderer::compile_shader(const char *source, GLenum shader_type)
 {
     GLuint shader = glCreateShader(shader_type);
