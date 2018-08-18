@@ -32,7 +32,11 @@ bool ConfigReader::option<bool>(const std::string& opt)
 template <>
 int ConfigReader::option<int>(const std::string& opt)
 {
-    return std::stoi(options.get_value(opt));
+    std::string value = options.get_value(opt);
+    if (value.size() > 2 && value[1] == 'x')
+        return std::stoi(value, nullptr, 16);
+    else
+        return std::stoi(value);
 }
 
 bool ConfigReader::load()

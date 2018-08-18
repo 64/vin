@@ -11,7 +11,7 @@
 class Renderer
 {
 public:
-    Renderer(const FontFace& font, const int& width, const int& height);
+    Renderer(const FontFace& font, const int& width, const int& height, int color);
 	~Renderer();
     long draw_character(char c, int x, int y);
     void draw_text(const std::string& text, int x, int y);

@@ -53,7 +53,7 @@ int main(int, char**)
         error("Failed to initialize Freetype");
 
     FontFace font(library, config.option<std::string>("font_path"), config.option<int>("font_size"));
-    Renderer renderer{font, SCR_WIDTH, SCR_HEIGHT};
+    Renderer renderer{font, SCR_WIDTH, SCR_HEIGHT, config.option<int>("bg_color")};
 
     while (!glfwWindowShouldClose(window))
     {

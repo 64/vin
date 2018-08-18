@@ -52,7 +52,7 @@ Options::Options()
     // Set defaults
     value_map =
     {
-        {"bg_color",     {ValueType::COLOR, "0x4A6F6F"}},
+        {"bg_color",     {ValueType::COLOR, "0x339966"}},
         {"line_numbers", {ValueType::BOOL, "FALSE"}},
         {"font_path",    {ValueType::STRING, "/usr/share/fonts/TTF/DejaVuSansMono.ttf"}},
         {"font_size",    {ValueType::INT, "14"}}

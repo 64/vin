@@ -40,11 +40,14 @@ const float quad_vertices[] = {
     0.0f, 0.0f
 };
 
-Renderer::Renderer(const FontFace& font, const int& width, const int& height)
+Renderer::Renderer(const FontFace& font, const int& width, const int& height, int color)
     : font_face(font), screen_width(width), screen_height(height)
 {
     // TODO: OpenGL error checking with glGetError
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    float red   = static_cast<float>(((color >> 16) & 0xFF)) / 255.0f;
+    float green = static_cast<float>((color >> 8) & 0xFF)    / 255.0f;
+    float blue  = static_cast<float>((color & 0x00FF))       / 255.0f;
+    glClearColor(red, green, blue, 1.0f);
 
     GLuint frag_shader = compile_shader(frag_source, GL_FRAGMENT_SHADER);
     GLuint vert_shader = compile_shader(vert_source, GL_VERTEX_SHADER);
