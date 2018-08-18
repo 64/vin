@@ -43,7 +43,7 @@ int main(int, char**)
 
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	glfwSwapInterval(1);
+    glfwSwapInterval(1);
 
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
         error("Failed to initialize GLAD");
@@ -53,16 +53,14 @@ int main(int, char**)
         error("Failed to initialize Freetype");
 
     Renderer renderer;
-    Font font(library, config.option("font_path"), 12);
+    Font font(library, config.option("font_path"), 14);
 
     while (!glfwWindowShouldClose(window))
     {
         glClear(GL_COLOR_BUFFER_BIT);
         process_input(window);
 
-        renderer.draw_character(window, 'G', 500, 500, font);
-        renderer.draw_character(window, 'A', 600, 500, font);
-        renderer.draw_character(window, 'Y', 670, 500, font);
+        renderer.draw_character(window, 'c', 100, 100, font);
 
         glfwSwapBuffers(window);
         glfwWaitEvents();

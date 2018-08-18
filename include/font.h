@@ -11,6 +11,8 @@ struct Glyph
 {
     GLuint texture;
     unsigned int height, width;
+    int bearingx, bearingy;
+    long advance;
 };
 
 class Font
