@@ -10,7 +10,7 @@
 struct Glyph
 {
     GLuint texture;
-    unsigned int height, width;
+    unsigned int width, height;
     int bearingx, bearingy;
     long advance;
 };
