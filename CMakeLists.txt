@@ -15,7 +15,7 @@ if (WIN64)
 	set(FT_WIN_PREFIX "win64")
 endif (WIN64)
 
-file(GLOB SRCS "${CMAKE_SOURCE_DIR}/src/*.cpp")
+file(GLOB SRCS "${CMAKE_SOURCE_DIR}/src/*.cpp" "${CMAKE_SOURCE_DIR}/src/*/*.cpp")
 add_executable(vin ${SRCS} "${CMAKE_SOURCE_DIR}/third_party/glad/src/glad.c")
 
 if(WIN32)
