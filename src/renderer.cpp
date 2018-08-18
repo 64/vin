@@ -1,7 +1,7 @@
+#include <iostream>
+
 #include "renderer.h"
 #include "font.h"
-
-#include <iostream>
 
 constexpr size_t LOG_LENGTH = 512;
 
