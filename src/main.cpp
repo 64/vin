@@ -14,6 +14,7 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void process_input(GLFWwindow *window);
 void message_box(const std::string& title, const std::string& msg);
+
 [[noreturn]] void error(const std::string& msg);
 
 constexpr unsigned int SCR_WIDTH = 800;
