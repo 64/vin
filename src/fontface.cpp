@@ -102,7 +102,8 @@ std::string get_font_path(const std::string& title)
 
 [[noreturn]] void error(const std::string& msg);
 
-FontFace::FontFace(FT_Library& library, const std::string& path, unsigned int height) : height(height)
+FontFace::FontFace(FT_Library& library, const std::string& path, int height, int _tabs_num_spaces)
+    : height(height), tabs_num_spaces(_tabs_num_spaces)
 {
     FT_Face face;
     if (FT_New_Face(library, path.c_str(), 0, &face))
@@ -158,6 +159,11 @@ FontFace::FontFace(FT_Library& library, const std::string& path, unsigned int he
 int FontFace::font_height() const
 {
     return height;
+}
+
+int FontFace::num_spaces() const
+{
+    return tabs_num_spaces;
 }
 
 Glyph FontFace::get_glyph(char c) const

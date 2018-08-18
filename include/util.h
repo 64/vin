@@ -10,6 +10,12 @@ struct Vec3f
     float b;
 };
 
+struct Vec2i
+{
+    int x;
+    int y;
+};
+
 void message_box(const std::string& title, const std::string& msg);
 Vec3f rgb_to_vec(int color);
 

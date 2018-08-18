@@ -119,20 +119,27 @@ long Renderer::draw_character(char c, int x, int y)
     return glyph.advancex;
 }
 
-void Renderer::draw_text(const std::string& text, int x, int y)
+Vec2i Renderer::draw_text(const std::string& text, int x, int y)
 {
-    int old_x = x;
     for (const auto ch : text)
     {
         if (ch == '\n')
         {
             y += font_face.font_height();
-            x = old_x; // Temp until TextEngine is functional
+            x = 10; // Temp until TextEngine is functional
+            continue;
+        }
+        else if (ch == '\t')
+        {
+            for (int i = 0; i < font_face.num_spaces(); ++i)
+                x += (draw_character(' ', x, y) >> 6);
             continue;
         }
 
         x += (draw_character(ch, x, y) >> 6);
     }
+
+    return {x, y};
 }
 
 GLuint Renderer::compile_shader(const char *source, GLenum shader_type)

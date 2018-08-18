@@ -56,7 +56,8 @@ Options::Options()
         {"fg_color",     {ValueType::COLOR,  "0x00CCFF"}},
         {"line_numbers", {ValueType::BOOL,   "FALSE"}},
         {"font_path",    {ValueType::STRING, "/usr/share/fonts/TTF/DejaVuSansMono.ttf"}},
-        {"font_size",    {ValueType::INT,    "14"}}
+        {"font_size",    {ValueType::INT,    "14"}},
+        {"tab_spaces",   {ValueType::INT,    "4"}},
     };
 }
 

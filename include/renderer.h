@@ -15,7 +15,7 @@ public:
     Renderer(const FontFace& font, const int& width, const int& height, int bg_color, int fg_color);
 	~Renderer();
     long draw_character(char c, int x, int y);
-    void draw_text(const std::string& text, int x, int y);
+    Vec2i draw_text(const std::string& text, int x, int y);
 
 private:
     GLuint compile_shader(const char *source, GLenum shader_type);

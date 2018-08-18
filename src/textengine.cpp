@@ -1,13 +1,39 @@
-#ifndef TEXTENGINE_H
-#define TEXTENGINE_H
+#include "textengine.h"
+#include "renderer.h"
+#include <iostream>
 
-class TextEngine
+
+TextEngine::TextEngine(int offset, Renderer& _renderer)
+    : renderer(_renderer), cur(10, offset), buffer("")
 {
-public:
-    TextEngine();
 
-private:
+}
 
-};
+void TextEngine::render()
+{
+    renderer.draw_text(buffer, cur.pos().x, cur.pos().y);
+}
 
-#endif
+void TextEngine::process_input(GLFWwindow *window)
+{
+    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+}
+
+void TextEngine::append(int ch)
+{
+    switch (ch)
+    {
+        case '\b':
+        {
+            if (!buffer.empty())
+                buffer.pop_back();
+        } break;
+
+        default:
+        {
+            buffer += ch;
+        } break;
+    }
+
+}

@@ -6,18 +6,25 @@
 #include <iostream>
 #include <cstdlib>
 #include <string>
+#include <queue>
+#include <cctype>
 
 #include "configreader.h"
 #include "renderer.h"
 #include "fontface.h"
+#include "textengine.h"
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void process_input(GLFWwindow *window);
-void message_box(const std::string& title, const std::string& msg);
 [[noreturn]] void error(const std::string& msg);
+void message_box(const std::string& title, const std::string& msg);
+void character_callback(GLFWwindow* window, unsigned int codepoint);
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 static int SCR_WIDTH = 800;
 static int SCR_HEIGHT = 600;
+
+static std::queue<int> buffer;
 
 int main(int, char**)
 {
@@ -43,6 +50,8 @@ int main(int, char**)
 
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetCharCallback(window, character_callback);
+    glfwSetKeyCallback(window, key_callback);
     glfwSwapInterval(1);
 
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
@@ -52,24 +61,22 @@ int main(int, char**)
     if (FT_Init_FreeType(&library))
         error("Failed to initialize Freetype");
 
-    FontFace font(library, config.option<std::string>("font_path"), config.option<int>("font_size"));
-    Renderer renderer{font, SCR_WIDTH, SCR_HEIGHT, config.option<int>("bg_color"), config.option<int>("fg_color")};
+    FontFace font{ library, config.option<std::string>("font_path"), config.option<int>("font_size"), config.option<int>("tab_spaces") };
+    Renderer renderer{ font, SCR_WIDTH, SCR_HEIGHT, config.option<int>("bg_color"), config.option<int>("fg_color") };
+    TextEngine engine{ config.option<int>("font_size"), renderer };
 
     while (!glfwWindowShouldClose(window))
     {
         glClear(GL_COLOR_BUFFER_BIT);
-        process_input(window);
+        engine.process_input(window);
 
-        renderer.draw_text("#version 330 core\n"
-                           "in vec2 TexCoords;\n"
-                           "out vec4 FragColor;\n"
-                           "\n"
-                           "uniform sampler2D text;\n"
-                           "void main()\n"
-                           "{\n"
-                           "    vec4 alpha_sample = vec4(1.0f, 1.0f, 1.0f, texture(text, TexCoords).r);\n"
-                           "    FragColor = vec4(1.0f) * alpha_sample;\n"
-                           "}", 10, 20);
+        while (!buffer.empty())
+        {
+            engine.append(buffer.front());
+            buffer.pop();
+        }
+
+        engine.render();
 
         glfwSwapBuffers(window);
         glfwWaitEvents();
@@ -81,17 +88,37 @@ int main(int, char**)
     return EXIT_SUCCESS;
 }
 
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (action == GLFW_REPEAT || action == GLFW_PRESS)
+    {
+        switch (key)
+        {
+            case GLFW_KEY_BACKSPACE:
+                buffer.push('\b');
+                break;
+
+            case GLFW_KEY_ENTER:
+                buffer.push('\n');
+                break;
+
+            case GLFW_KEY_TAB:
+                buffer.push('\t');
+                break;
+        }
+    }
+}
+
+void character_callback(GLFWwindow* window, unsigned int codepoint)
+{
+    buffer.push(codepoint);
+}
+
 void error(const std::string& msg)
 {
     std::cerr << msg << std::endl;
     glfwTerminate();
     exit(EXIT_FAILURE);
-}
-
-void process_input(GLFWwindow *window)
-{
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
 }
 
 void framebuffer_size_callback(GLFWwindow*, int width, int height)
