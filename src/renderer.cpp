@@ -118,9 +118,7 @@ long Renderer::draw_character(char c, unsigned int x, unsigned int y)
 void Renderer::draw_text(const std::string& text, unsigned int x, unsigned int y)
 {
     for (const auto ch : text)
-    {
         x += (draw_character(ch, x, y) >> 6);
-    }
 }
 
 GLuint Renderer::compile_shader(const char *source, GLenum shader_type)

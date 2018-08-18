@@ -1,6 +1,7 @@
 #include <iostream> // Temporary
 #include <utility>
 #include <cstdlib>
+#include <type_traits>
 
 #include "configreader.h"
 #include "trim.h"
@@ -14,9 +15,25 @@ ConfigReader::ConfigReader()
     
 }
 
-std::string ConfigReader::option(const std::string& opt)
+template <>
+std::string ConfigReader::option<std::string>(const std::string& opt)
 {
     return options.get_value(opt);
+}
+
+template <>
+bool ConfigReader::option<bool>(const std::string& opt)
+{
+    if (options.get_value(opt) == "true" || options.get_value(opt) == "TRUE")
+        return true;
+
+    return false;
+}
+
+template <>
+int ConfigReader::option<int>(const std::string& opt)
+{
+    return std::stoi(options.get_value(opt));
 }
 
 bool ConfigReader::load()
