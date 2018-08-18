@@ -17,8 +17,8 @@ void message_box(const std::string& title, const std::string& msg);
 
 [[noreturn]] void error(const std::string& msg);
 
-constexpr unsigned int SCR_WIDTH = 800;
-constexpr unsigned int SCR_HEIGHT = 600;
+int SCR_WIDTH = 800;
+int SCR_HEIGHT = 600;
 
 int main(int, char**)
 {
@@ -54,7 +54,7 @@ int main(int, char**)
         error("Failed to initialize Freetype");
 
     FontFace font(library, config.option("font_path"), 14);
-    Renderer renderer{font};
+    Renderer renderer{font, SCR_WIDTH, SCR_HEIGHT};
 
     while (!glfwWindowShouldClose(window))
     {
@@ -87,5 +87,7 @@ void process_input(GLFWwindow *window)
 
 void framebuffer_size_callback(GLFWwindow*, int width, int height)
 {
+    SCR_WIDTH = width;
+    SCR_HEIGHT = height;
     glViewport(0, 0, width, height);
 }
