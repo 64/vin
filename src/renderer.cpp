@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "renderer.h"
-#include "font.h"
+#include "fontface.h"
 
 constexpr size_t LOG_LENGTH = 512;
 
@@ -15,7 +15,7 @@ const char *vert_source =
 "\n"
 "void main()\n"
 "{\n"
-"    TexCoords = vec2(aPos.x, -aPos.y);\n"
+"    TexCoords = vec2(aPos.x, 1 - aPos.y);\n"
 "    gl_Position = vec4((aPos * scale) + offset, 0.0, 1.0);\n"
 "}";
 
@@ -28,16 +28,16 @@ const char *frag_source =
 "void main()\n"
 "{\n"
 "    vec4 alpha_sample = vec4(1.0f, 1.0f, 1.0f, texture(text, TexCoords).r);\n"
-"    FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f) * alpha_sample;\n"
+"    FragColor = vec4(1.0f) * alpha_sample;\n"
 "}";
 
 const float quad_vertices[] = {
-    0.0f, -1.0f,
-    0.0f,  0.0f,
-    1.0f,  0.0f,
-    1.0f,  0.0f,
-    1.0f, -1.0f,
-    0.0f, -1.0f
+    0.0f, 0.0f,
+    0.0f, 1.0f,
+    1.0f, 1.0f,
+    1.0f, 1.0f,
+    1.0f, 0.0f,
+    0.0f, 0.0f
 };
 
 Renderer::Renderer()
@@ -91,7 +91,7 @@ Renderer::~Renderer()
 
 }
 
-void Renderer::draw_character(GLFWwindow *window, char c, unsigned int x, unsigned int y, const Font& font)
+void Renderer::draw_character(GLFWwindow *window, char c, unsigned int x, unsigned int y, const FontFace& font)
 {
     // TODO: Cache width, height
     int width, height;
@@ -114,7 +114,7 @@ void Renderer::draw_character(GLFWwindow *window, char c, unsigned int x, unsign
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
-void Renderer::draw_text(GLFWwindow *window, const std::string& text, unsigned int x, unsigned int y, const Font& font)
+void Renderer::draw_text(GLFWwindow *window, const std::string& text, unsigned int x, unsigned int y, const FontFace& font)
 {
     // TODO: Cache width, height
     int width, height;
@@ -124,7 +124,7 @@ void Renderer::draw_text(GLFWwindow *window, const std::string& text, unsigned i
     {
         Glyph glyph = font.get_glyph(ch);
         int xpos = x + glyph.bearingx;
-        int ypos = y + (glyph.height - glyph.bearingy) + (font.max_height - glyph.height);
+        int ypos = y + glyph.height - glyph.bearingy;
 
         float xratio = (float)xpos / (float)width;
         float yratio = (float)ypos / (float)height;

@@ -18,10 +18,10 @@ struct Glyph
     long advance;
 };
 
-class Font
+class FontFace
 {
 public:
-    Font(FT_Library& library, const std::string& path, unsigned int height);
+    FontFace(FT_Library& library, const std::string& path, unsigned int height);
     Glyph get_glyph(char c) const;
 
     static std::string get_system_font(const std::string& font_name);

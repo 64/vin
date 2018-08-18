@@ -9,7 +9,7 @@
 
 #include "configreader.h"
 #include "renderer.h"
-#include "font.h"
+#include "fontface.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void process_input(GLFWwindow *window);
@@ -54,14 +54,14 @@ int main(int, char**)
         error("Failed to initialize Freetype");
 
     Renderer renderer;
-    Font font(library, config.option("font_path"), 14);
+    FontFace font(library, config.option("font_path"), 14);
 
     while (!glfwWindowShouldClose(window))
     {
         glClear(GL_COLOR_BUFFER_BIT);
         process_input(window);
 
-        renderer.draw_text(window, "The quick brown fox jumps over the lazy log", 300, 300, font);
+        renderer.draw_text(window, "The quick brown fox jumps over the lazy dog", 300, 300, font);
 
         glfwSwapBuffers(window);
         glfwWaitEvents();

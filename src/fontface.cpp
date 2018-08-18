@@ -1,7 +1,12 @@
 #include <iostream>
 #include <algorithm>
+#include <string>
+#include <string.h>
+#include <sstream>
+#include <cstdlib>
+#include <GLFW/glfw3.h>
 
-#include "font.h"
+#include "fontface.h"
 
 #ifdef linux
 
@@ -14,13 +19,8 @@
 #include <windows.h>
 #endif
 
-#include <string>
-#include <string.h>
-#include <sstream>
-#include <stdlib.h>
-
 #if defined(_WIN32) || defined(WIN32)
-std::string get_font_path_windows(const std::string& font_name)
+std::string get_font_path(const std::string& font_name)
 {
     static const char * fontRegistryPath = "Software\\Microsoft\\Windows NT\\CurrentVersion\\Fonts";
     HKEY hKey;
@@ -94,21 +94,32 @@ std::string get_font_path_windows(const std::string& font_name)
 #endif
 
 #ifdef linux
-std::string get_font_path_x11(const std::string& title)
+std::string get_font_path(const std::string& title)
 {
-
+    return "";
 }
 #endif
 
 [[noreturn]] void error(const std::string& msg);
 
-Font::Font(FT_Library& library, const std::string& path, unsigned int height)
+FontFace::FontFace(FT_Library& library, const std::string& path, unsigned int height)
 {
     FT_Face face;
     if (FT_New_Face(library, path.c_str(), 0, &face))
         error("Failed to load font from path: " + path);
 
-    FT_Set_Pixel_Sizes(face, 0, height);
+    // TODO: See whether this is necessary on high-dpi displays (retina, 4k etc)
+    /*int mon_width, mon_height;
+    GLFWmonitor *monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode *mode = glfwGetVideoMode(monitor);
+    glfwGetMonitorPhysicalSize(monitor, &mon_width, &mon_height);
+
+    double horiz_dpi = mode->width / (mon_width / 25.4);
+    double vert_dpi = mode->height / (mon_height / 25.4);
+
+    FT_Set_Char_Size(face, 0, height * 64, (int)horiz_dpi, (int)vert_dpi);*/
+
+    FT_Set_Pixel_Sizes(face, 0, height); // For now, use this
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte alignment
 
@@ -146,18 +157,13 @@ Font::Font(FT_Library& library, const std::string& path, unsigned int height)
     FT_Done_Face(face);
 }
 
-Glyph Font::get_glyph(char c) const
+Glyph FontFace::get_glyph(char c) const
 {
     // TODO: OOB checking / handling
     return glyphs.find(c)->second;
 }
 
-std::string Font::get_system_font(const std::string& font_name)
+std::string FontFace::get_system_font(const std::string& font_name)
 {
-#ifdef linux
-    return get_font_path_x11(font_name);
-#endif
-#if defined(_WIN32) || defined(WIN32)
-    return get_font_path_windows(font_name);
-#endif
+    return get_font_path(font_name);
 }

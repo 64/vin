@@ -5,9 +5,12 @@ project(vin)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D__DEBUG__")
 
+
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "Build GLFW examples")
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "Build GLFW tests")
 add_subdirectory("third_party/glfw")
+
+add_definitions(-DGLFW_INCLUDE_NONE)
 
 option(WIN64 "Use Win64 FreeType Binaries (Windows Only)" OFF)
 set(FT_WIN_PREFIX "win32")
