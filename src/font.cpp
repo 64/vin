@@ -154,7 +154,7 @@ Glyph Font::get_glyph(char c) const
 
 std::string Font::get_system_font(const std::string& font_name)
 {
-#if linux
+#ifdef linux
     return get_font_path_x11(font_name);
 #endif
 #if defined(_WIN32) || defined(WIN32)
