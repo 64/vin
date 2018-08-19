@@ -2,7 +2,6 @@
 #include "renderer.h"
 #include <iostream>
 
-
 TextEngine::TextEngine(int offset, Renderer& _renderer)
     : renderer(_renderer), cur(10, offset), buffer("")
 {

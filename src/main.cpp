@@ -61,7 +61,11 @@ int main(int, char**)
     if (FT_Init_FreeType(&library))
         error("Failed to initialize Freetype");
 
-    FontFace font{ library, config.option<std::string>("font_path"), config.option<int>("font_size"),
+    std::string font_path = (config.option<bool>("use_font_path") ? 
+            config.option<std::string>("font_path") : 
+            FontFace::get_system_font(config.option<std::string>("font_family")));
+
+    FontFace font{ library, font_path, config.option<int>("font_size"),
         config.option<int>("tab_spaces"), config.option<int>("cursor_width") };
     Renderer renderer{ font, SCR_WIDTH, SCR_HEIGHT, config.option<int>("bg_color"), config.option<int>("fg_color") };
     TextEngine engine{ config.option<int>("font_size"), renderer };

@@ -33,7 +33,7 @@ bool valid_color(const std::string& val)
         if (valid_number(val))
         {
             int col = std::stoi(val); // Maybe change for RGBA values
-            valid = (col >= 0x000000 && col <= 0xFFFFFF) ? true : false;
+            valid = (col >= 0x000000 && col <= 0xFFFFFF);
             std::cout << col << std::endl;
             std::cout << val << std::endl;
         }
@@ -55,10 +55,12 @@ Options::Options()
         {"bg_color",     {ValueType::COLOR,  "0x000000"}},
         {"fg_color",     {ValueType::COLOR,  "0x00CCFF"}},
         {"line_numbers", {ValueType::BOOL,   "FALSE"}},
+        {"use_font_path",{ValueType::BOOL,   "TRUE"}},
         {"font_path",    {ValueType::STRING, "/usr/share/fonts/TTF/DejaVuSansMono.ttf"}},
+        {"font_family",  {ValueType::STRING, "DejaVu Sans Mono"}}, // used if use_font_path is FALSE
         {"font_size",    {ValueType::INT,    "14"}},
         {"tab_spaces",   {ValueType::INT,    "4"}},
-        {"cursor_width", {ValueType::INT,    "0"}},
+        {"cursor_width", {ValueType::INT,    "0"}}
     };
 }
 
