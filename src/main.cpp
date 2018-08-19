@@ -65,8 +65,9 @@ int main(int, char**)
             config.option<std::string>("font_path") : 
             FontFace::get_system_font(config.option<std::string>("font_family")));
 
-    FontFace font{ library, font_path, config.option<int>("font_size"),
-        config.option<int>("tab_spaces"), config.option<int>("cursor_width") };
+    FontFace font{ library, font_path,
+        static_cast<unsigned int>(config.option<int>("font_size")),
+        config.option<int>("tab_spaces"), config.option<bool>("block_cursor") };
     Renderer renderer{ font, SCR_WIDTH, SCR_HEIGHT, config.option<int>("bg_color"), config.option<int>("fg_color") };
     TextEngine engine{ config.option<int>("font_size"), renderer };
 

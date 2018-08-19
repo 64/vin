@@ -7,6 +7,7 @@
 #include <GLFW/glfw3.h>
 
 #include "fontface.h"
+#include "util.h"
 
 #ifdef linux
 
@@ -100,9 +101,8 @@ std::string get_font_path(const std::string& title)
 }
 #endif
 
-[[noreturn]] void error(const std::string& msg);
 
-FontFace::FontFace(FT_Library& library, const std::string& path, int height, int _tabs_num_spaces, int cursor_width)
+FontFace::FontFace(FT_Library& library, const std::string& path, unsigned int height, int _tabs_num_spaces, bool block_cursor)
     : height(height), tabs_num_spaces(_tabs_num_spaces)
 {
     FT_Face face;
@@ -125,7 +125,7 @@ FontFace::FontFace(FT_Library& library, const std::string& path, int height, int
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte alignment
 
     // Loop through all ASCII characters and render them to textures
-    for (unsigned char c = 1; c < 128; c++)
+    for (unsigned char c = 1; c < 255; c++)
     {
         if (FT_Load_Char(face, c, FT_LOAD_RENDER))
             error("Failed to load font character '" + std::string{static_cast<char>(c)} + "' from path: " + path);
@@ -175,12 +175,9 @@ FontFace::FontFace(FT_Library& library, const std::string& path, int height, int
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    if (cursor_width == 0)
-        cursor_width = face->glyph->bitmap.width;
-
     // TODO: Will using face->glyph->bitmap_top from the last rendered character cause any problems?
-    glyphs.emplace(0, Glyph { texture, static_cast<unsigned int>(cursor_width), static_cast<unsigned int>(height),
-            0, face->glyph->bitmap_top, cursor_width * 64, 0 });
+    glyphs.emplace(0, Glyph { texture, block_cursor ? face->glyph->bitmap.width : 1, height,
+            0, face->glyph->bitmap_top, 0, 0 });
 
     FT_Done_Face(face);
 }
@@ -195,7 +192,7 @@ int FontFace::num_spaces() const
     return tabs_num_spaces;
 }
 
-Glyph FontFace::get_glyph(char c) const
+Glyph FontFace::get_glyph(unsigned char c) const
 {
     // TODO: OOB checking / handling
     return glyphs.find(c)->second;

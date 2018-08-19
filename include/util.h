@@ -18,5 +18,6 @@ struct Vec2i
 
 void message_box(const std::string& title, const std::string& msg);
 Vec3f rgb_to_vec(int color);
+[[noreturn]] void error(const std::string& msg);
 
 #endif // UTIL_H

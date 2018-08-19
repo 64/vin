@@ -95,7 +95,7 @@ Renderer::~Renderer()
 
 }
 
-long Renderer::draw_character(char c, int x, int y)
+long Renderer::draw_character(unsigned char c, int x, int y)
 {
     Glyph glyph = font_face.get_glyph(c);
     int xpos = x + glyph.bearingx;
@@ -119,14 +119,14 @@ long Renderer::draw_character(char c, int x, int y)
     return glyph.advancex;
 }
 
-Vec2i Renderer::draw_text(const std::string& text, int x, int y)
+Vec2i Renderer::draw_text(const std::string& text, int& x, int& y)
 {
     for (const auto ch : text)
     {
         if (ch == '\n')
         {
             y += font_face.font_height();
-            x = 10; // Temp until TextEngine is functional
+            x = 5; // Temp until TextEngine is functional
             continue;
         }
         else if (ch == '\t')

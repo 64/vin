@@ -60,7 +60,7 @@ Options::Options()
         {"font_family",  {ValueType::STRING, "DejaVu Sans Mono"}}, // used if use_font_path is FALSE
         {"font_size",    {ValueType::INT,    "14"}},
         {"tab_spaces",   {ValueType::INT,    "4"}},
-        {"cursor_width", {ValueType::INT,    "0"}}
+        {"block_cursor", {ValueType::BOOL,   "TRUE"}},
     };
 }
 

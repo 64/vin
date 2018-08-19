@@ -3,14 +3,16 @@
 #include <iostream>
 
 TextEngine::TextEngine(int offset, Renderer& _renderer)
-    : renderer(_renderer), cur(10, offset), buffer("")
+    : renderer(_renderer), cur(5, offset), buffer("")
 {
 
 }
 
 void TextEngine::render()
 {
-    renderer.draw_text(buffer, cur.pos().x, cur.pos().y);
+    Vec2i pos = cur.pos();
+    renderer.draw_text(buffer, pos.x, pos.y);
+    renderer.draw_character(0, pos.x, pos.y);
 }
 
 void TextEngine::process_input(GLFWwindow *window)
