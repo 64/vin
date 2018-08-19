@@ -40,7 +40,6 @@ private:
     bool hl_cur_line;
     bool line_numbers;
     int lines;
-
 };
 
 #endif

@@ -82,8 +82,6 @@ int main(int, char**)
                 config.option<bool>("hl_cur_line"),
                 config.option<bool>("line_numbers") };
 
-    std::cout << config.option<int>("cr_color") << std::endl;
-
     while (!glfwWindowShouldClose(window))
     {
         glClear(GL_COLOR_BUFFER_BIT);

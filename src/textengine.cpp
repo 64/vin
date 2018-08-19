@@ -11,6 +11,7 @@ TextEngine::TextEngine(Renderer& _renderer, FontFace& _font, int offset, int _fg
       cl_color(rgb_to_vec(_cl_color)), cr_color(rgb_to_vec(_cr_color)), ln_color(rgb_to_vec(_ln_color)),
       gt_color(rgb_to_vec(_gt_color)),  hl_cur_line(_hl_cur_line), lines(0), line_numbers(_line_numbers)
 {
+
     cur.pos() = line_numbers ? Vec2i{ origin.x + GUTTER_WIDTH, origin.y } : origin;
 }
 
