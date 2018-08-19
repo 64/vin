@@ -42,8 +42,8 @@ const float quad_vertices[] = {
     0.0f, 0.0f
 };
 
-Renderer::Renderer(const FontFace& font, const int& width, const int& height, int _bg_color, int _fg_color)
-    : font_face(font), screen_width(width), screen_height(height), bg_color(rgb_to_vec(_bg_color)), fg_color(rgb_to_vec(_fg_color))
+Renderer::Renderer(const FontFace& font, const int& width, const int& height, int _bg_color)
+    : font_face(font), screen_width(width), screen_height(height), bg_color(rgb_to_vec(_bg_color))
 {
     // TODO: OpenGL error checking with glGetError
     glClearColor(bg_color.r, bg_color.g, bg_color.b, 1.0f);
@@ -95,7 +95,7 @@ Renderer::~Renderer()
 
 }
 
-long Renderer::draw_character(unsigned char c, int x, int y)
+long Renderer::draw_character(unsigned char c, int x, int y, const Vec3f& color)
 {
     Glyph glyph = font_face.get_glyph(c);
     int xpos = x + glyph.bearingx;
@@ -111,7 +111,7 @@ long Renderer::draw_character(unsigned char c, int x, int y)
 
     glUniform2f(scale_uniform_location, x_scale, y_scale); // TODO: Cache this since it rarely changes
     glUniform2f(offset_uniform_location, x_offset, y_offset);
-    glUniform3f(color_uniform_location, fg_color.r, fg_color.g, fg_color.b);
+    glUniform3f(color_uniform_location, color.r, color.g, color.b);
     
     glBindTexture(GL_TEXTURE_2D, glyph.texture);
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -119,7 +119,7 @@ long Renderer::draw_character(unsigned char c, int x, int y)
     return glyph.advancex;
 }
 
-Vec2i Renderer::draw_text(const std::string& text, int& x, int& y)
+Vec2i Renderer::draw_text(const std::string& text, int& x, int& y, const Vec3f& color)
 {
     for (const auto ch : text)
     {
@@ -132,11 +132,11 @@ Vec2i Renderer::draw_text(const std::string& text, int& x, int& y)
         else if (ch == '\t')
         {
             for (int i = 0; i < font_face.num_spaces(); ++i)
-                x += (draw_character(' ', x, y) >> 6);
+                x += (draw_character(' ', x, y, color) >> 6);
             continue;
         }
 
-        x += (draw_character(ch, x, y) >> 6);
+        x += (draw_character(ch, x, y, color) >> 6);
     }
 
     return {x, y};

@@ -8,6 +8,8 @@
 #include <unordered_map>
 #include <string>
 
+#include "util.h"
+
 struct Glyph
 {
     GLuint texture;
@@ -33,7 +35,6 @@ private:
     std::unordered_map<char, Glyph> glyphs;
     int height;
     int tabs_num_spaces;
-
 };
 
 #endif

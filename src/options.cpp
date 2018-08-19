@@ -1,6 +1,5 @@
 #include <algorithm>
 #include <cctype>
-#include <iostream>
 #include <cassert>
 
 #include "options.h"
@@ -34,8 +33,6 @@ bool valid_color(const std::string& val)
         {
             int col = std::stoi(val); // Maybe change for RGBA values
             valid = (col >= 0x000000 && col <= 0xFFFFFF);
-            std::cout << col << std::endl;
-            std::cout << val << std::endl;
         }
         else
         {
@@ -52,8 +49,10 @@ Options::Options()
     // Set defaults
     value_map =
     {
-        {"bg_color",     {ValueType::COLOR,  "0x000000"}},
-        {"fg_color",     {ValueType::COLOR,  "0x00CCFF"}},
+        {"bg_color",     {ValueType::COLOR,  "0x336699"}},
+        {"fg_color",     {ValueType::COLOR,  "0xFF9900"}},
+        {"cl_color",     {ValueType::COLOR,  "0x3333CC"}},
+        {"cr_color",     {ValueType::COLOR,  "0x0000FF"}},
         {"line_numbers", {ValueType::BOOL,   "FALSE"}},
         {"use_font_path",{ValueType::BOOL,   "TRUE"}},
         {"font_path",    {ValueType::STRING, "/usr/share/fonts/TTF/DejaVuSansMono.ttf"}},
@@ -61,6 +60,7 @@ Options::Options()
         {"font_size",    {ValueType::INT,    "14"}},
         {"tab_spaces",   {ValueType::INT,    "4"}},
         {"block_cursor", {ValueType::BOOL,   "TRUE"}},
+        {"hl_cur_line",  {ValueType::BOOL,   "TRUE"}},
     };
 }
 
@@ -87,7 +87,7 @@ bool Options::validate(ValueType val_type, const std::string& val)
 
         case ValueType::BOOL:
         {
-            status = (val == "true" || val == "false" || val == "TRUE" || val == "FALSE") ? true : false;
+            status = (val == "true" || val == "false" || val == "TRUE" || val == "FALSE");
         } break;
 
         case ValueType::STRING:

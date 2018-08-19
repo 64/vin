@@ -66,10 +66,20 @@ int main(int, char**)
             FontFace::get_system_font(config.option<std::string>("font_family")));
 
     FontFace font{ library, font_path,
-        static_cast<unsigned int>(config.option<int>("font_size")),
-        config.option<int>("tab_spaces"), config.option<bool>("block_cursor") };
-    Renderer renderer{ font, SCR_WIDTH, SCR_HEIGHT, config.option<int>("bg_color"), config.option<int>("fg_color") };
-    TextEngine engine{ config.option<int>("font_size"), renderer };
+                static_cast<unsigned int>(config.option<int>("font_size")),
+                config.option<int>("tab_spaces"),
+                config.option<bool>("block_cursor") };
+
+    Renderer renderer{ font, SCR_WIDTH, SCR_HEIGHT, config.option<int>("bg_color")};
+
+    TextEngine engine{ renderer, font,
+                config.option<int>("font_size"),
+                config.option<int>("fg_color"),
+                config.option<int>("cl_color"),
+                config.option<int>("cr_color"),
+                config.option<bool>("hl_cur_line")};
+
+    std::cout << config.option<int>("cr_color") << std::endl;
 
     while (!glfwWindowShouldClose(window))
     {

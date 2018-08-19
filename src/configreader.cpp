@@ -24,10 +24,7 @@ std::string ConfigReader::option<std::string>(const std::string& opt)
 template <>
 bool ConfigReader::option<bool>(const std::string& opt)
 {
-    if (options.get_value(opt) == "true" || options.get_value(opt) == "TRUE")
-        return true;
-
-    return false;
+    return (options.get_value(opt) == "true" || options.get_value(opt) == "TRUE");
 }
 
 template <>

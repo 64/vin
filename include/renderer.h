@@ -12,10 +12,10 @@
 class Renderer
 {
 public:
-    Renderer(const FontFace& font, const int& width, const int& height, int bg_color, int fg_color);
+    Renderer(const FontFace& font, const int& width, const int& height, int bg_color);
 	~Renderer();
-    long draw_character(unsigned char c, int x, int y);
-    Vec2i draw_text(const std::string& text, int& x, int& y);
+    long draw_character(unsigned char c, int x, int y, const Vec3f& color);
+    Vec2i draw_text(const std::string& text, int& x, int& y, const Vec3f& color);
 
 private:
     GLuint compile_shader(const char *source, GLenum shader_type);
@@ -24,7 +24,6 @@ private:
     const int& screen_width;
     const int& screen_height;
     Vec3f bg_color;
-    Vec3f fg_color;
 };
 
 #endif
