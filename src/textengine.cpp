@@ -8,9 +8,8 @@ TextEngine::TextEngine(Renderer& _renderer, FontFace& _font, int offset, int _fg
                        int _ln_color, int _gt_color, bool _hl_cur_line, bool _line_numbers)
     : renderer(_renderer), font(_font), cur(5, offset), buffer(""), origin(5, offset), fg_color(rgb_to_vec(_fg_color)),
       cl_color(rgb_to_vec(_cl_color)), cr_color(rgb_to_vec(_cr_color)), ln_color(rgb_to_vec(_ln_color)),
-      gt_color(rgb_to_vec(_gt_color)),  hl_cur_line(_hl_cur_line), lines(0), line_numbers(_line_numbers)
+      gt_color(rgb_to_vec(_gt_color)),  hl_cur_line(_hl_cur_line), lines(0), line_numbers(_line_numbers), cursor_pos(0)
 {
-
 }
 
 void TextEngine::render()
@@ -56,6 +55,7 @@ void TextEngine::append(int ch)
                     --lines;
                 }
                 buffer.pop_back();
+                --cursor_pos;
             }
         } break;
 
@@ -67,8 +67,16 @@ void TextEngine::append(int ch)
 
         default:
         {
-            buffer += ch;
+            buffer.insert(cursor_pos, 1, ch);
+            ++cursor_pos;
         } break;
     }
 
+}
+
+void TextEngine::offset_cursor(int offset)
+{
+    if (offset > 0) { if ((cursor_pos+offset) >= buffer.size()) return; }
+    else if (offset < 0) { if ((cursor_pos+offset) < 0) return; }
+    cursor_pos += offset;
 }

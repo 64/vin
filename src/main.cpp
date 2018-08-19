@@ -25,6 +25,7 @@ static int SCR_WIDTH = 800;
 static int SCR_HEIGHT = 600;
 
 static std::queue<int> buffer;
+static TextEngine * engine_ptr;
 
 int main(int, char**)
 {
@@ -81,6 +82,7 @@ int main(int, char**)
                 config.option<int>("gt_color"),
                 config.option<bool>("hl_cur_line"),
                 config.option<bool>("line_numbers") };
+    engine_ptr = &engine;
 
     std::cout << config.option<int>("cr_color") << std::endl;
 
@@ -123,6 +125,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
             case GLFW_KEY_TAB:
                 buffer.push('\t');
+                break;
+            
+            case GLFW_KEY_LEFT:
+                engine_ptr->offset_cursor(-1);
+                break;
+
+            case GLFW_KEY_RIGHT:
+                engine_ptr->offset_cursor(1);
                 break;
         }
     }

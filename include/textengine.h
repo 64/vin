@@ -25,6 +25,7 @@ public:
     void process_input(GLFWwindow *window);
     void append(int ch);
     void character_callback(GLFWwindow* window, unsigned int codepoint);
+    void offset_cursor(int offset);
 
 private:
     Renderer& renderer;
@@ -40,7 +41,7 @@ private:
     bool hl_cur_line;
     bool line_numbers;
     int lines;
-
+    int cursor_pos;
 };
 
 #endif
