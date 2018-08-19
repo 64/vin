@@ -58,6 +58,7 @@ Options::Options()
         {"font_path",    {ValueType::STRING, "/usr/share/fonts/TTF/DejaVuSansMono.ttf"}},
         {"font_size",    {ValueType::INT,    "14"}},
         {"tab_spaces",   {ValueType::INT,    "4"}},
+        {"cursor_width", {ValueType::INT,    "0"}},
     };
 }
 

@@ -102,7 +102,7 @@ std::string get_font_path(const std::string& title)
 
 [[noreturn]] void error(const std::string& msg);
 
-FontFace::FontFace(FT_Library& library, const std::string& path, int height, int _tabs_num_spaces)
+FontFace::FontFace(FT_Library& library, const std::string& path, int height, int _tabs_num_spaces, int cursor_width)
     : height(height), tabs_num_spaces(_tabs_num_spaces)
 {
     FT_Face face;
@@ -125,7 +125,7 @@ FontFace::FontFace(FT_Library& library, const std::string& path, int height, int
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte alignment
 
     // Loop through all ASCII characters and render them to textures
-    for (unsigned char c = 0; c < 128; c++)
+    for (unsigned char c = 1; c < 128; c++)
     {
         if (FT_Load_Char(face, c, FT_LOAD_RENDER))
             error("Failed to load font character '" + std::string{static_cast<char>(c)} + "' from path: " + path);
@@ -152,6 +152,35 @@ FontFace::FontFace(FT_Library& library, const std::string& path, int height, int
 
         glyphs.emplace(c, Glyph { texture, face->glyph->bitmap.width, face->glyph->bitmap.rows, face->glyph->bitmap_left, face->glyph->bitmap_top, face->glyph->advance.x, face->glyph->advance.y });
     }
+
+    // Create a 1-pixel texture which we can upscale and use as a solid rect (e.g for the cursor)
+    unsigned char pixel = 0xFF;
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(
+        GL_TEXTURE_2D,
+        0,
+        GL_RED,
+        1,
+        1,
+        0,
+        GL_RED,
+        GL_UNSIGNED_BYTE,
+        &pixel
+    );
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    if (cursor_width == 0)
+        cursor_width = face->glyph->bitmap.width;
+
+    // TODO: Will using face->glyph->bitmap_top from the last rendered character cause any problems?
+    glyphs.emplace(0, Glyph { texture, static_cast<unsigned int>(cursor_width), static_cast<unsigned int>(height),
+            0, face->glyph->bitmap_top, cursor_width * 64, 0 });
 
     FT_Done_Face(face);
 }

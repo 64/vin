@@ -22,7 +22,7 @@ struct Glyph
 class FontFace
 {
 public:
-    FontFace(FT_Library& library, const std::string& path, int height, int _tabs_num_spaces);
+    FontFace(FT_Library& library, const std::string& path, int height, int _tabs_num_spaces, int cursor_width);
     Glyph get_glyph(char c) const;
     int font_height() const;
     int num_spaces() const;
