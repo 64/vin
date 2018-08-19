@@ -5,7 +5,7 @@
 
 struct Vec3f
 {
-    Vec3f(float _r, float _g, float _b) : r(_r), g(_g), b(_g) {}
+    Vec3f(float _r, float _g, float _b) : r(_r), g(_g), b(_b) {}
     float r;
     float g;
     float b;

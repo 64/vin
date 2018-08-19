@@ -49,15 +49,15 @@ Options::Options()
     // Set defaults
     value_map =
     {
-        {"bg_color",     {ValueType::COLOR,  "0x336699"}},
-        {"fg_color",     {ValueType::COLOR,  "0xFF9900"}},
-        {"cl_color",     {ValueType::COLOR,  "0x3333CC"}},
-        {"cr_color",     {ValueType::COLOR,  "0x0000FF"}},
+        {"bg_color",     {ValueType::COLOR,  "0x0099CC"}},
+        {"fg_color",     {ValueType::COLOR,  "0x000000"}},
+        {"cl_color",     {ValueType::COLOR,  "0x00CC99"}},
+        {"cr_color",     {ValueType::COLOR,  "0x000000"}},
         {"line_numbers", {ValueType::BOOL,   "FALSE"}},
         {"use_font_path",{ValueType::BOOL,   "TRUE"}},
         {"font_path",    {ValueType::STRING, "/usr/share/fonts/TTF/DejaVuSansMono.ttf"}},
         {"font_family",  {ValueType::STRING, "DejaVu Sans Mono"}}, // used if use_font_path is FALSE
-        {"font_size",    {ValueType::INT,    "14"}},
+        {"font_size",    {ValueType::INT,    "18"}},
         {"tab_spaces",   {ValueType::INT,    "4"}},
         {"block_cursor", {ValueType::BOOL,   "TRUE"}},
         {"hl_cur_line",  {ValueType::BOOL,   "TRUE"}},
