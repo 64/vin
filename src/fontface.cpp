@@ -124,7 +124,7 @@ FontFace::FontFace(FT_Library& library, const std::string& path, unsigned int he
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte alignment
 
     // Loop through all ASCII characters and render them to textures
-    for (unsigned char c = 2; c < 255; c++)
+    for (unsigned char c = 3; c < 255; c++)
     {
         if (FT_Load_Char(face, c, FT_LOAD_RENDER))
             error("Failed to load font character '" + std::string{static_cast<char>(c)} + "' from path: " + path);
@@ -174,10 +174,14 @@ FontFace::FontFace(FT_Library& library, const std::string& path, unsigned int he
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
+    width = face->glyph->bitmap.width;
+
     // TODO: Will using face->glyph->bitmap_top from the last rendered character cause any problems?
     glyphs.emplace(0, Glyph { texture, block_cursor ? face->glyph->bitmap.width : 1, height,
             0, face->glyph->bitmap_top, 0, 0 });
     glyphs.emplace(1, Glyph { texture, 64000, height,
+            0, face->glyph->bitmap_top, 0, 0 });
+    glyphs.emplace(2, Glyph { texture, width * 5, 64000,
             0, face->glyph->bitmap_top, 0, 0 });
 
     FT_Done_Face(face);
@@ -186,6 +190,11 @@ FontFace::FontFace(FT_Library& library, const std::string& path, unsigned int he
 int FontFace::font_height() const
 {
     return height;
+}
+
+int FontFace::font_width() const
+{
+    return width;
 }
 
 int FontFace::num_spaces() const

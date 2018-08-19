@@ -49,18 +49,20 @@ Options::Options()
     // Set defaults
     value_map =
     {
-        {"bg_color",     {ValueType::COLOR,  "0x0099CC"}},
-        {"fg_color",     {ValueType::COLOR,  "0x000000"}},
-        {"cl_color",     {ValueType::COLOR,  "0x00CC99"}},
-        {"cr_color",     {ValueType::COLOR,  "0x000000"}},
-        {"line_numbers", {ValueType::BOOL,   "FALSE"}},
-        {"use_font_path",{ValueType::BOOL,   "TRUE"}},
+        {"bg_color",     {ValueType::COLOR,  "0x002B35"}},  // Background Color
+        {"fg_color",     {ValueType::COLOR,  "0x829496"}},  // Text Color
+        {"cl_color",     {ValueType::COLOR,  "0x023641"}},  // Color used to highlight current line
+        {"cr_color",     {ValueType::COLOR,  "0x92A1A1"}},  // Caret Color
+        {"ln_color",     {ValueType::COLOR,  "0x576E75"}},  // Line numbers Color
+        {"gt_color",     {ValueType::COLOR,  "0x023641"}},  // Gutter Color
         {"font_path",    {ValueType::STRING, "/usr/share/fonts/TTF/DejaVuSansMono.ttf"}},
-        {"font_family",  {ValueType::STRING, "DejaVu Sans Mono"}}, // used if use_font_path is FALSE
-        {"font_size",    {ValueType::INT,    "18"}},
-        {"tab_spaces",   {ValueType::INT,    "4"}},
-        {"block_cursor", {ValueType::BOOL,   "TRUE"}},
-        {"hl_cur_line",  {ValueType::BOOL,   "TRUE"}},
+        {"font_family",  {ValueType::STRING, "DejaVu Sans Mono"}}, // Used if use_font_path is FALSE
+        {"font_size",    {ValueType::INT,    "14"}},        // Font size
+        {"tab_spaces",   {ValueType::INT,    "4"}},         // number of spaces to use for tabs
+        {"line_numbers", {ValueType::BOOL,   "TRUE"}},     // Show line numbers
+        {"use_font_path",{ValueType::BOOL,   "TRUE"}},      // Use fully qualified font path
+        {"block_cursor", {ValueType::BOOL,   "TRUE"}},      // Show block or line cursor
+        {"hl_cur_line",  {ValueType::BOOL,   "TRUE"}},      // Highlight the line the caret is on
     };
 }
 

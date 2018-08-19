@@ -10,6 +10,8 @@
 
 #include "util.h"
 
+#define GUTTER_WIDTH (font.font_width() * 5)
+
 struct Glyph
 {
     GLuint texture;
@@ -27,13 +29,15 @@ public:
     FontFace(FT_Library& library, const std::string& path, unsigned int height, int _tabs_num_spaces, bool block_cursor);
     Glyph get_glyph(unsigned char c) const;
     int font_height() const;
+    int font_width() const;
     int num_spaces() const;
 
     static std::string get_system_font(const std::string& font_name);
 
 private:
     std::unordered_map<char, Glyph> glyphs;
-    int height;
+    unsigned int height;
+    unsigned int width;
     int tabs_num_spaces;
 };
 

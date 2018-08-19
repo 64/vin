@@ -119,14 +119,14 @@ long Renderer::draw_character(unsigned char c, int x, int y, const Vec3f& color)
     return glyph.advancex;
 }
 
-Vec2i Renderer::draw_text(const std::string& text, int& x, int& y, const Vec3f& color)
+Vec2i Renderer::draw_text(const std::string& text, int x, int y, const Vec3f& color, bool ln)
 {
     for (const auto ch : text)
     {
         if (ch == '\n')
         {
             y += font_face.font_height();
-            x = 5; // Temp until TextEngine is functional
+            x = ln ? (font_face.font_width() * 5) + 5 : 5; // Temp until TextEngine is functional
             continue;
         }
         else if (ch == '\t')

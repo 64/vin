@@ -77,7 +77,10 @@ int main(int, char**)
                 config.option<int>("fg_color"),
                 config.option<int>("cl_color"),
                 config.option<int>("cr_color"),
-                config.option<bool>("hl_cur_line")};
+                config.option<int>("ln_color"),
+                config.option<int>("gt_color"),
+                config.option<bool>("hl_cur_line"),
+                config.option<bool>("line_numbers") };
 
     std::cout << config.option<int>("cr_color") << std::endl;
 
