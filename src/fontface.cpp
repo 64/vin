@@ -100,6 +100,12 @@ std::string get_font_path(const std::string& title)
 }
 #endif
 
+#ifdef __APPLE__
+std::string get_font_path(const std::string& title)
+{
+    return "";
+}
+#endif
 
 FontFace::FontFace(FT_Library& library, const std::string& path, unsigned int height, int _tabs_num_spaces, bool block_cursor)
     : height(height), tabs_num_spaces(_tabs_num_spaces)
