@@ -102,17 +102,14 @@ void TextEngine::append(unsigned int ch)
             break;
 
         case 321:
-            std::cout << active_buffer->offset() << std::endl;
             if (active_buffer->offset() > 0)
-            {
                 active_buffer->offset() -= font.font_height();
-            } break;
+                break;
 
         case 320:
             if (active_buffer->offset() < ((active_buffer->get_lines().size() - 1) * font.font_height()))
-            {
                 active_buffer->offset() += font.font_height();
-            } break;
+                break;
 
 
         default:
