@@ -52,6 +52,7 @@ private:
     int num_lines;
     Vec2i orig;
     FontFace* font;
+    unsigned int scroll_offset;
 
 };
 

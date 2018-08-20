@@ -125,6 +125,7 @@ Vec2i Renderer::draw_text(const std::string& text, Vec2i pos, const Vec3f& color
     {
         if (ch == '\n')
         {
+//            (draw_character('|', pos, color) >> 6);
             pos.y += font_face.font_height();
             pos.x = ln ? (font_face.font_width() * 5) + 5 : 5; // Temp until TextEngine is functional
             continue;

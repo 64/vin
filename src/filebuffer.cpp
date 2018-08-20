@@ -5,8 +5,12 @@
 
 #include "filebuffer.h"
 
+#define X    cur.pos().x    // Column
+#define Y    cur.pos().y    // Row
+#define LINE cur.line()     // Current line
+
 FileBuffer::FileBuffer(const std::string& file_name, const Vec2i& _orig, FontFace* _font)
-    : name(file_name), num_lines(0), cur(0, 0, lines.begin()), orig(_orig), font(_font)
+    : name(file_name), num_lines(0), cur(0, 0, lines.begin()), orig(_orig), font(_font), scroll_offset(0)
 {
     std::ifstream file { file_name };
     if (file)
@@ -30,12 +34,12 @@ FileBuffer::FileBuffer(const std::string& file_name, const Vec2i& _orig, FontFac
     }
 
     // Set current line to first line
-    cur.line() = lines.begin();
+    LINE = lines.begin();
 }
 
 void FileBuffer::ins_char(unsigned int ch)
 {
-   cur.line()->insert(cur.line()->begin() + cur.pos().x , &ch, &ch + 1);
+   LINE->insert(LINE->begin() + X, &ch, &ch + 1);
    move_pos(Move::RIGHT);
 }
 
@@ -46,58 +50,57 @@ const std::list<GapBuffer<char>>& FileBuffer::get_lines()
 
 Vec2i FileBuffer::draw_pos()
 {
-    return {line_width(cur.pos().x) + orig.x, font->font_height() * (cur.pos().y + 1)};
+    return {line_width(X) + orig.x, font->font_height() * (Y + 1)};
 }
 
 void FileBuffer::del()
 {
-    auto it = std::next(cur.line());
-    if (cur.line()->at(cur.pos().x) == '\n' && it != lines.end())
+    auto it = std::next(LINE);
+    if (LINE->at(X) == '\n' && it != lines.end())
     {
-        cur.line()->erase(cur.line()->begin() + cur.pos().x);
-        cur.line()->insert(cur.line()->begin() + cur.pos().x, it->begin(), it->end());
+        LINE->erase(LINE->begin() + X);
+        LINE->insert(LINE->begin() + X, it->begin(), it->end());
         lines.erase(it);
     }
-    else if (cur.line() == std::prev(lines.end()) && cur.pos().x == cur.line()->size())
+    else if (LINE == std::prev(lines.end()) && X == LINE->size())
     {
         return;
     }
-    else if (!cur.line()->empty())
+    else if (!LINE->empty())
     {
-        cur.line()->erase(cur.line()->begin() + cur.pos().x);
+        LINE->erase(LINE->begin() + X);
     }
 }
 
 void FileBuffer::backspace()
 {
-    if (cur.pos().x > 0)
+    if (X > 0)
     {
         move_pos(Move::LEFT);
-        cur.line()->erase(cur.line()->begin() + cur.pos().x);
+        LINE->erase(LINE->begin() + X);
     }
-    else if (cur.line() != lines.begin())
+    else if (LINE != lines.begin())
     {
-        --cur.line();
-        --cur.pos().y;
-        cur.pos().x = cur.line()->size() - 1;
-        auto it = std::next(cur.line());
-        cur.line()->pop_back();
-        cur.line()->insert(cur.line()->end(), it->begin(), it->end());
+        --LINE;
+        --Y;
+        X = LINE->size() - 1;
+        auto it = std::next(LINE);
+        LINE->pop_back();
+        LINE->insert(LINE->end(), it->begin(), it->end());
         lines.erase(it);
     }
 }
 
 void FileBuffer::new_line()
 {
-    cur.line()->insert(cur.line()->begin() + cur.pos().x + 1, '\n');
-    ++cur.pos().x;
-    lines.emplace(std::next(cur.line()), 0, 20);
-    auto it = std::next(cur.line());
-    it->insert(it->begin(), cur.line()->begin() + cur.pos().x, cur.line()->end());
-    cur.line()->erase(cur.line()->begin() + cur.pos().x, cur.line()->end());
-    ++cur.line();
-    cur.pos().x = 0;
-    ++cur.pos().y;
+    LINE->insert(LINE->begin() + ++X, '\n');
+    lines.emplace(std::next(LINE), 0, 20);
+    auto it = std::next(LINE);
+    it->insert(it->begin(), LINE->begin() + X, LINE->end());
+    LINE->erase(LINE->begin() + X, LINE->end());
+    ++LINE;
+    ++Y;
+    X = 0;
 }
 
 int FileBuffer::line_width(int delim)
@@ -106,9 +109,9 @@ int FileBuffer::line_width(int delim)
 
     if (delim != -1)
         for (int i = 0; i < delim; ++i)
-            total += font->get_glyph(cur.line()->at(i)).advancex >> 6;
+            total += font->get_glyph(LINE->at(i)).advancex >> 6;
     else
-        std::for_each(cur.line()->begin(), cur.line()->end(), [&total, this](char ch)
+        std::for_each(LINE->begin(), LINE->end(), [&total, this](char ch)
         {if (ch != '\n') total += font->get_glyph(ch).advancex >> 6;});
 
     return total;
@@ -116,8 +119,8 @@ int FileBuffer::line_width(int delim)
 
 void FileBuffer::calc_short_line()
 {
-    if (cur.pos().x > cur.line()->size() - 1)
-        cur.pos().x = cur.line()->size() - 1;
+    if (X > LINE->size() - 1)
+        X = LINE->size() - 1;
 }
 
 void FileBuffer::move_pos(Move dir)
@@ -125,32 +128,32 @@ void FileBuffer::move_pos(Move dir)
     switch (dir)
     {
         case Move::UP:
-            if (cur.line() != lines.begin())
+            if (LINE != lines.begin())
             {
-                --cur.line();
-                --cur.pos().y;
+                --LINE;
+                --Y;
                 calc_short_line();
             } break;
 
         case Move::DOWN:
-            if (cur.pos().y < lines.size() - 1)
+            if (Y < lines.size() - 1)
             {
-                ++cur.line();
-                ++cur.pos().y;
+                ++LINE;
+                ++Y;
                 calc_short_line();
             } break;
 
         case Move::LEFT:
-            if (cur.pos().x > 0)
+            if (X > 0)
             {
-                --cur.pos().x;
+                --X;
             } break;
 
         case Move::RIGHT:
-            if (cur.pos().x < cur.line()->size())
+            if (X < LINE->size())
             {
-                if (cur.line()->at(cur.pos().x) != '\n')
-                    ++cur.pos().x;
+                if (LINE->at(X) != '\n')
+                    ++X;
             } break;
     }
 }
