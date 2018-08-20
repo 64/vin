@@ -152,7 +152,7 @@ void key_callback(GLFWwindow*, int key, int , int action, int)
 void scroll_callback(GLFWwindow*, double, double yoffset)
 {
     // Magic number to signal a scroll event
-    buffer.push(static_cast<int>(yoffset) == 1 ? 321 : 320);
+    buffer.push((static_cast<int>(yoffset) == 1) ? 321 : 320);
 }
 
 void character_callback(GLFWwindow*, unsigned int codepoint)

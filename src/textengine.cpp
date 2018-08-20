@@ -1,6 +1,7 @@
 #include <string>
 #include <fstream>
 #include <cctype>
+#include <iostream>
 
 #include "textengine.h"
 #include "renderer.h"
@@ -47,7 +48,8 @@ void TextEngine::render()
 
     if (line_numbers)
     {
-        renderer.draw_rectangle({0, 0, GUTTER_WIDTH, -SCR_HEIGHT}, gt_color); // Gutter
+        // Draw gutter
+        renderer.draw_rectangle({0, 0, GUTTER_WIDTH, -SCR_HEIGHT}, gt_color);
         for (unsigned int i = 0; i < active_buffer->get_lines().size(); ++i)
         {
             std::string num = std::to_string(i + 1);
@@ -99,18 +101,18 @@ void TextEngine::append(unsigned int ch)
             active_buffer->tab();
             break;
 
-        case 320:
         case 321:
-            if (active_buffer->offset() == 321)
+            std::cout << active_buffer->offset() << std::endl;
+            if (active_buffer->offset() > 0)
             {
-                if (active_buffer->offset())
-                    active_buffer->offset() -= font.font_height();
-            }
-            else if (active_buffer->offset() == 321)
+                active_buffer->offset() -= font.font_height();
+            } break;
+
+        case 320:
+            if (active_buffer->offset() < ((active_buffer->get_lines().size() - 1) * font.font_height()))
             {
                 active_buffer->offset() += font.font_height();
-            }
-            break;
+            } break;
 
 
         default:
