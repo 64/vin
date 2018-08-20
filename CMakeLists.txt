@@ -5,23 +5,27 @@ project(vin)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D__DEBUG__")
 
-
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "Build GLFW examples")
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "Build GLFW tests")
+
 add_subdirectory("third_party/glfw")
-
 add_definitions(-DGLFW_INCLUDE_NONE)
-
-option(WIN64 "Use Win64 FreeType Binaries (Windows Only)" OFF)
-set(FT_WIN_PREFIX "win32")
-if (WIN64)
-	set(FT_WIN_PREFIX "win64")
-    endif (WIN64)
 
 file(GLOB SRCS "${CMAKE_SOURCE_DIR}/src/*.cpp")
 add_executable(vin ${SRCS} "${CMAKE_SOURCE_DIR}/third_party/glad/src/glad.c")
 
-if(WIN32)
+if(WIN32 OR MINGW OR CYGWIN)
+    include(CheckSymbolExists)
+
+    set(CMAKE_REQUIRED_QUIET ON)
+    check_symbol_exists("_WIN64" "" X64)
+
+    if(X64)
+        set(FT_WIN_PREFIX "win64")
+    else()
+        set(FT_WIN_PREFIX "win32")
+    endif()
+
     set(ENV{FREETYPE_DIR} "${CMAKE_SOURCE_DIR}/third_party/freetype_win")
 
     # The github repo doesn't have the binaries in quite the right place for us to use.
