@@ -20,6 +20,7 @@ void message_box(const std::string& title, const std::string& msg);
 void character_callback(GLFWwindow* window, unsigned int codepoint);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 int SCR_WIDTH = 800;
 int SCR_HEIGHT = 600;
@@ -52,6 +53,7 @@ int main(int, char**)
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCharCallback(window, character_callback);
     glfwSetKeyCallback(window, key_callback);
+    glfwSetScrollCallback(window, scroll_callback);
     glfwSwapInterval(1);
 
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
@@ -67,8 +69,7 @@ int main(int, char**)
 
     FontFace font{ library, font_path,
                 static_cast<unsigned int>(config.option<int>("font_size")),
-                config.option<int>("tab_spaces"),
-                config.option<bool>("block_cursor") };
+                config.option<int>("tab_spaces"), };
 
     Renderer renderer{ font, config.option<int>("bg_color")};
 
@@ -80,7 +81,8 @@ int main(int, char**)
                 config.option<int>("ln_color"),
                 config.option<int>("gt_color"),
                 config.option<bool>("hl_cur_line"),
-                config.option<bool>("line_numbers") };
+                config.option<bool>("line_numbers"),
+                config.option<bool>("block_caret"), };
 
     while (!glfwWindowShouldClose(window))
     {
@@ -105,7 +107,7 @@ int main(int, char**)
     return EXIT_SUCCESS;
 }
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void key_callback(GLFWwindow*, int key, int , int action, int)
 {
     if (action == GLFW_REPEAT || action == GLFW_PRESS)
     {
@@ -146,16 +148,15 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 }
 
+void scroll_callback(GLFWwindow*, double, double yoffset)
+{
+    // Magic number to signal a scroll event
+    buffer.push(static_cast<int>(yoffset) == 1 ? 321 : 320);
+}
+
 void character_callback(GLFWwindow*, unsigned int codepoint)
 {
     buffer.push(codepoint);
-}
-
-void error(const std::string& msg)
-{
-    std::cerr << msg << std::endl;
-    glfwTerminate();
-    exit(EXIT_FAILURE);
 }
 
 void framebuffer_size_callback(GLFWwindow*, int width, int height)

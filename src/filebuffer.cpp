@@ -1,7 +1,6 @@
 #include <string>
 #include <fstream>
 #include <algorithm>
-#include <iostream>
 
 #include "filebuffer.h"
 
@@ -174,12 +173,15 @@ void FileBuffer::check_for_offset()
         scroll_offset -= font->font_height();
 }
 
-int FileBuffer::line_count()
+int FileBuffer::ch_width()
 {
-    return lines.size();
+    if (!LINE->empty())
+        return font->get_glyph(LINE->at(X)).advancex >> 6;
+    else
+        return font->font_width();
 }
 
-unsigned int FileBuffer::get_offset()
+int& FileBuffer::offset()
 {
     return scroll_offset;
 }

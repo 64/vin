@@ -61,7 +61,7 @@ Options::Options()
         {"tab_spaces",   {ValueType::INT,    "4"}},         // number of spaces to use for tabs
         {"line_numbers", {ValueType::BOOL,   "TRUE"}},     // Show line numbers
         {"use_font_path",{ValueType::BOOL,   "TRUE"}},      // Use fully qualified font path
-        {"block_cursor", {ValueType::BOOL,   "FALSE"}},      // Show block or line cursor
+        {"block_caret", {ValueType::BOOL,   "TRUE"}},      // Show block or line cursor
         {"hl_cur_line",  {ValueType::BOOL,   "TRUE"}},      // Highlight the line the caret is on
     };
 }

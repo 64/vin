@@ -107,8 +107,8 @@ std::string get_font_path(const std::string& title)
 }
 #endif
 
-FontFace::FontFace(FT_Library& library, const std::string& path, unsigned int height, int _tabs_num_spaces, bool block_cursor)
-    : height(height), tabs_num_spaces(_tabs_num_spaces)
+FontFace::FontFace(FT_Library& library, const std::string& path, unsigned int _height, int _tabs_num_spaces)
+    : tabs_num_spaces(_tabs_num_spaces), width(0), cleft(0), height(0)
 {
     FT_Face face;
     if (FT_New_Face(library, path.c_str(), 0, &face))
@@ -125,7 +125,7 @@ FontFace::FontFace(FT_Library& library, const std::string& path, unsigned int he
 
     FT_Set_Char_Size(face, 0, height * 64, (int)horiz_dpi, (int)vert_dpi);*/
 
-    FT_Set_Pixel_Sizes(face, 0, height); // For now, use this
+    FT_Set_Pixel_Sizes(face, 0, _height); // For now, use this
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte alignment
 
@@ -155,6 +155,10 @@ FontFace::FontFace(FT_Library& library, const std::string& path, unsigned int he
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+        int hang = face->glyph->bitmap.rows - face->glyph->bitmap_top;
+        if (hang > cleft && hang < 500)
+            cleft = face->glyph->bitmap.rows - face->glyph->bitmap_top;
+
         glyphs.emplace(c, Glyph { texture, face->glyph->bitmap.width, face->glyph->bitmap.rows, face->glyph->bitmap_left, face->glyph->bitmap_top, face->glyph->advance.x, face->glyph->advance.y });
     }
 
@@ -180,15 +184,13 @@ FontFace::FontFace(FT_Library& library, const std::string& path, unsigned int he
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    width = face->glyph->bitmap.width;
+    height = _height + cleft;
+    width = face->glyph->advance.x >> 6;
 
     // TODO: Will using face->glyph->bitmap_top from the last rendered character cause any problems?
-    glyphs.emplace(0, Glyph { texture, block_cursor ? face->glyph->bitmap.width : 1, height,
-            0, face->glyph->bitmap_top, 0, 0 });
-    glyphs.emplace(1, Glyph { texture, 64000, height,
-            0, face->glyph->bitmap_top, 0, 0 });
-    glyphs.emplace(2, Glyph { texture, width * 5, 64000,
-            0, face->glyph->bitmap_top, 0, 0 });
+    glyphs.emplace(0, Glyph { texture, face->glyph->bitmap.width, static_cast<unsigned int>(height) + cleft,
+            0, height, 0, 0 });
+    glyphs.emplace(1, Glyph { texture, 64000, static_cast<unsigned int>(height) + cleft, 0, height, 0, 0 });
 
     FT_Done_Face(face);
 }
@@ -201,6 +203,11 @@ int FontFace::font_height() const
 int FontFace::font_width() const
 {
     return width;
+}
+
+int FontFace::font_cleft() const
+{
+    return cleft;
 }
 
 int FontFace::num_spaces() const

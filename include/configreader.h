@@ -21,4 +21,8 @@ private:
 
 };
 
+template<> std::string ConfigReader::option<std::string>(const std::string& opt);
+template<> bool ConfigReader::option<bool>(const std::string& opt);
+template<> int ConfigReader::option<int>(const std::string& opt);
+
 #endif // CONFIGREADER_H

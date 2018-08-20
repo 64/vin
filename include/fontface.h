@@ -26,18 +26,20 @@ struct Glyph
 class FontFace
 {
 public:
-    FontFace(FT_Library& library, const std::string& path, unsigned int height, int _tabs_num_spaces, bool block_cursor);
+    FontFace(FT_Library& library, const std::string& path, unsigned int height, int _tabs_num_spaces);
     Glyph get_glyph(unsigned char c) const;
     int font_height() const;
     int font_width() const;
+    int font_cleft() const;
     int num_spaces() const;
 
     static std::string get_system_font(const std::string& font_name);
 
 private:
     std::unordered_map<char, Glyph> glyphs;
-    unsigned int height;
-    unsigned int width;
+    int height;
+    int width;
+    int cleft;
     int tabs_num_spaces;
 };
 

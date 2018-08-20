@@ -40,9 +40,9 @@ public:
     void backspace();
     void new_line();
     int line_width(int delim = -1);
-    unsigned int get_offset();
+    int& offset();
     void ins_char(unsigned int ch);
-    int line_count();
+    int ch_width();
 
 private:
     void calc_short_line();
@@ -55,7 +55,7 @@ private:
     int num_lines;
     Vec2i orig;
     FontFace* font;
-    unsigned int scroll_offset;
+    int scroll_offset;
 
 };
 
