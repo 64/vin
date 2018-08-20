@@ -1,13 +1,14 @@
 #include <string>
 #include <fstream>
+#include <cctype>
 
 #include "textengine.h"
 #include "renderer.h"
 #include "util.h"
 
-TextEngine::TextEngine(Renderer& _renderer, FontFace& _font, int offset, int _fg_color, int _cl_color, int _cr_color,
+TextEngine::TextEngine(Renderer& _renderer, FontFace& _font, int offset, int _bg_color, int _fg_color, int _cl_color, int _cr_color,
                        int _ln_color, int _gt_color, bool _hl_cur_line, bool _line_numbers, bool _block_caret)
-    : renderer(_renderer), font(_font), buffer(""), origin(5, offset), fg_color(rgb_to_vec(_fg_color)),
+    : renderer(_renderer), font(_font), buffer(""), origin(5, offset), bg_color(rgb_to_vec(_bg_color)), fg_color(rgb_to_vec(_fg_color)),
       cl_color(rgb_to_vec(_cl_color)), cr_color(rgb_to_vec(_cr_color)), ln_color(rgb_to_vec(_ln_color)),
       gt_color(rgb_to_vec(_gt_color)), hl_cur_line(_hl_cur_line), line_numbers(_line_numbers), block_caret(_block_caret)
 {
@@ -37,6 +38,12 @@ void TextEngine::render()
     Vec2i&& cur = active_buffer->draw_pos();
     int caret_width = block_caret ? active_buffer->ch_width() : 2;
     renderer.draw_rectangle({cur.x, cur.y + font.font_cleft(), caret_width, font.font_height() + font.font_cleft()}, cr_color);
+
+    int c = active_buffer->ch();
+    if (!std::isspace(c))
+    {
+        renderer.draw_character(c, {cur.x, cur.y - font.font_cleft()}, bg_color);
+    }
 
     if (line_numbers)
     {
@@ -86,6 +93,10 @@ void TextEngine::append(unsigned int ch)
 
         case '\b':
             active_buffer->backspace();
+            break;
+
+        case '\t':
+            active_buffer->tab();
             break;
 
         case 320:

@@ -38,8 +38,8 @@ FileBuffer::FileBuffer(const std::string& file_name, const Vec2i& _orig, FontFac
 
 void FileBuffer::ins_char(unsigned int ch)
 {
-   LINE->insert(LINE->begin() + X, &ch, &ch + 1);
-   move_pos(Move::RIGHT);
+    LINE->insert(LINE->begin() + X, &ch, &ch + 1);
+    move_pos(Move::RIGHT);
 }
 
 const std::list<GapBuffer<char>>& FileBuffer::get_lines()
@@ -70,6 +70,12 @@ void FileBuffer::del()
         LINE->erase(LINE->begin() + X);
     }
     check_for_offset();
+}
+
+void FileBuffer::tab()
+{
+    for (int i = 0; i < font->num_spaces(); ++i)
+        ins_char(' ');
 }
 
 void FileBuffer::backspace()
@@ -179,6 +185,11 @@ int FileBuffer::ch_width()
         return font->get_glyph(LINE->at(X)).advancex >> 6;
     else
         return font->font_width();
+}
+
+int FileBuffer::ch()
+{
+    return LINE->at(X);
 }
 
 int& FileBuffer::offset()

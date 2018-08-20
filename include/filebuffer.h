@@ -38,11 +38,13 @@ public:
     void move_pos(Move dir);
     void del();
     void backspace();
+    void tab();
     void new_line();
     int line_width(int delim = -1);
     int& offset();
     void ins_char(unsigned int ch);
     int ch_width();
+    int ch();
 
 private:
     void calc_short_line();

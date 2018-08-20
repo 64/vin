@@ -75,6 +75,7 @@ int main(int, char**)
 
     TextEngine engine{ renderer, font,
                 config.option<int>("font_size"),
+                config.option<int>("bg_color"),
                 config.option<int>("fg_color"),
                 config.option<int>("cl_color"),
                 config.option<int>("cr_color"),

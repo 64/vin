@@ -13,8 +13,9 @@
 class TextEngine
 {
 public:
-    TextEngine(Renderer& _renderer, FontFace& _font, int offset, int _fg_color,
-               int _cl_color, int _cr_color, int _ln_color, int _gt_color, bool _hl_cur_line, bool _line_numbers, bool _block_caret);
+    TextEngine(Renderer& _renderer, FontFace& _font, int offset, int bg_color, int _fg_color,
+               int _cl_color, int _cr_color, int _ln_color, int _gt_color, bool _hl_cur_line,
+               bool _line_numbers, bool _block_caret);
     void render();
     void process_input(GLFWwindow *window);
     void append(unsigned int ch);
@@ -25,6 +26,7 @@ private:
     FontFace& font;
     std::string buffer; // This will be replaced by the file buffers and is only for the typing test
     Vec2i origin;
+    Vec3f bg_color;
     Vec3f fg_color;
     Vec3f cl_color;
     Vec3f cr_color;
