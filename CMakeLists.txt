@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.6)
 
-#set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17)
 project(vin)
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D__DEBUG__")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D__DEBUG__ -DNDEBUG")
 
 
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "Build GLFW examples")
@@ -16,7 +16,7 @@ option(WIN64 "Use Win64 FreeType Binaries (Windows Only)" OFF)
 set(FT_WIN_PREFIX "win32")
 if (WIN64)
 	set(FT_WIN_PREFIX "win64")
-endif (WIN64)
+    endif (WIN64)
 
 file(GLOB SRCS "${CMAKE_SOURCE_DIR}/src/*.cpp")
 add_executable(vin ${SRCS} "${CMAKE_SOURCE_DIR}/third_party/glad/src/glad.c")

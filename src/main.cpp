@@ -24,7 +24,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 static int SCR_WIDTH = 800;
 static int SCR_HEIGHT = 600;
 
-static std::queue<int> buffer;
+static std::queue<unsigned int> buffer;
 
 int main(int, char**)
 {
@@ -115,18 +115,38 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
                 buffer.push('\b');
                 break;
 
-            case GLFW_KEY_ENTER:
-                buffer.push('\n');
-                break;
-
             case GLFW_KEY_TAB:
                 buffer.push('\t');
+                break;
+
+            case GLFW_KEY_ENTER:
+                buffer.push(GLFW_KEY_ENTER);
+                break;
+
+            case GLFW_KEY_UP:
+                buffer.push(GLFW_KEY_UP);
+                break;
+
+            case GLFW_KEY_DOWN:
+                buffer.push(GLFW_KEY_DOWN);
+                break;
+
+            case GLFW_KEY_LEFT:
+                buffer.push(GLFW_KEY_LEFT);
+                break;
+
+            case GLFW_KEY_RIGHT:
+                buffer.push(GLFW_KEY_RIGHT);
+                break;
+
+            case GLFW_KEY_DELETE:
+                buffer.push(GLFW_KEY_DELETE);
                 break;
         }
     }
 }
 
-void character_callback(GLFWwindow* window, unsigned int codepoint)
+void character_callback(GLFWwindow*, unsigned int codepoint)
 {
     buffer.push(codepoint);
 }

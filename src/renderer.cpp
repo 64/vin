@@ -95,11 +95,11 @@ Renderer::~Renderer()
 
 }
 
-long Renderer::draw_character(unsigned char c, int x, int y, const Vec3f& color)
+long Renderer::draw_character(unsigned char c, Vec2i pos, const Vec3f& color)
 {
     Glyph glyph = font_face.get_glyph(c);
-    int xpos = x + glyph.bearingx;
-    int ypos = y + glyph.height - glyph.bearingy;
+    int xpos = pos.x + glyph.bearingx;
+    int ypos = pos.y + glyph.height - glyph.bearingy;
 
     float xratio = static_cast<float>(xpos) / static_cast<float>(screen_width);
     float yratio = static_cast<float>(ypos) / static_cast<float>(screen_height);
@@ -119,27 +119,31 @@ long Renderer::draw_character(unsigned char c, int x, int y, const Vec3f& color)
     return glyph.advancex;
 }
 
-Vec2i Renderer::draw_text(const std::string& text, int x, int y, const Vec3f& color, bool ln)
+Vec2i Renderer::draw_text(const std::string& text, Vec2i pos, const Vec3f& color, bool ln)
 {
     for (const auto ch : text)
     {
         if (ch == '\n')
         {
-            y += font_face.font_height();
-            x = ln ? (font_face.font_width() * 5) + 5 : 5; // Temp until TextEngine is functional
+            pos.y += font_face.font_height();
+            pos.x = ln ? (font_face.font_width() * 5) + 5 : 5; // Temp until TextEngine is functional
             continue;
         }
         else if (ch == '\t')
         {
             for (int i = 0; i < font_face.num_spaces(); ++i)
-                x += (draw_character(' ', x, y, color) >> 6);
+                pos.x += (draw_character(' ', pos, color) >> 6);
+            continue;
+        }
+        else if (ch == '\0')
+        {
             continue;
         }
 
-        x += (draw_character(ch, x, y, color) >> 6);
+        pos.x += (draw_character(ch, pos, color) >> 6);
     }
 
-    return {x, y};
+    return {pos.x, pos.y};
 }
 
 GLuint Renderer::compile_shader(const char *source, GLenum shader_type)
