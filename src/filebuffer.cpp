@@ -46,7 +46,7 @@ const std::list<GapBuffer<char>>& FileBuffer::get_lines()
 
 Vec2i FileBuffer::draw_pos()
 {
-    return draw_coords;
+    return {draw_coords.x, font->font_height() * (cur.pos().y + 1)};
 }
 
 void FileBuffer::del()
@@ -81,7 +81,6 @@ void FileBuffer::backspace()
         --cur.pos().y;
         cur.pos().x = cur.line()->size() - 1;
         draw_coords.x = line_width() + orig.x;
-        draw_coords.y -= font->font_height();
         auto it = std::next(cur.line());
         cur.line()->pop_back();
         cur.line()->insert(cur.line()->end(), it->begin(), it->end());
@@ -100,7 +99,6 @@ void FileBuffer::new_line()
     ++cur.line();
     cur.pos().x = 0;
     ++cur.pos().y;
-    draw_coords.y += font->font_height();
     draw_coords.x = orig.x;
 }
 
@@ -133,7 +131,6 @@ void FileBuffer::move_pos(Move dir)
             {
                 --cur.line();
                 --cur.pos().y;
-                draw_coords.y -= font->font_height();
                 calc_short_line();
             } break;
 
@@ -142,7 +139,6 @@ void FileBuffer::move_pos(Move dir)
             {
                 ++cur.line();
                 ++cur.pos().y;
-                draw_coords.y += font->font_height();
                 calc_short_line();
             } break;
 
