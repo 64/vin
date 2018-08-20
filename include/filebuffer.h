@@ -44,6 +44,7 @@ public:
     int& offset();
     void ins_char(unsigned int ch);
     int ch_width();
+    void jump_to_caret();
     int ch();
 
 private:

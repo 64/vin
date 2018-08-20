@@ -131,6 +131,20 @@ void FileBuffer::calc_short_line()
         X = LINE->size() - 1;
 }
 
+void FileBuffer::jump_to_caret()
+{
+    if (draw_pos().y < 0)
+    {
+        scroll_offset += draw_pos().y - font->font_height() * 1;
+        scroll_offset = scroll_offset < 0 ? 0 : scroll_offset;
+    }
+    else if (draw_pos().y > SCR_HEIGHT)
+    {
+        scroll_offset += draw_pos().y - font->font_height() * (SCR_HEIGHT / font->font_height());
+    }
+
+}
+
 void FileBuffer::move_pos(Move dir)
 {
     switch (dir)
@@ -144,7 +158,9 @@ void FileBuffer::move_pos(Move dir)
                 --Y;
                 calc_short_line();
                 check_for_offset();
-            } break;
+            }
+            jump_to_caret();
+            break;
 
         case Move::DOWN:
             if (Y < lines.size() - 1)
@@ -153,20 +169,26 @@ void FileBuffer::move_pos(Move dir)
                 ++Y;
                 calc_short_line();
                 check_for_offset();
-            } break;
+            }
+            jump_to_caret();
+            break;
 
         case Move::LEFT:
             if (X > 0)
             {
                 --X;
-            } break;
+            }
+            jump_to_caret();
+            break;
 
         case Move::RIGHT:
             if (X < LINE->size())
             {
                 if (LINE->at(X) != '\n')
                     ++X;
-            } break;
+            }
+            jump_to_caret();
+            break;
     }
 }
 
