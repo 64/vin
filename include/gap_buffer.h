@@ -333,8 +333,8 @@ public:
         m_pGapStart = m_pStart + spaceRequired;
         m_pGapEnd = m_pEnd;
 
-        assert(m_pGapStart <= m_pEnd);
-        assert(size() >= size_t(spaceRequired));
+//        assert(m_pGapStart <= m_pEnd);
+//        assert(size() >= size_t(spaceRequired));
 
         DEBUG_FILL_GAP;
     }
@@ -361,8 +361,8 @@ public:
         m_pGapStart = m_pStart + count;
         m_pGapEnd = m_pEnd;
 
-        assert(m_pGapStart <= m_pEnd);
-        assert(size() >= size_t(count));
+//        assert(m_pGapStart <= m_pEnd);
+//        assert(size() >= size_t(count));
 
         DEBUG_FILL_GAP;
     }
@@ -405,7 +405,7 @@ public:
 
     iterator erase(const_iterator start, const_iterator end)
     {
-        assert(start.p < size() && end.p < (size() + 1));
+//        assert(start.p < size() && end.p < (size() + 1));
         MoveGap(start.p);
 
         auto count = std::distance(start, end);
@@ -431,25 +431,25 @@ public:
 
     reference front()
     {
-        assert(!empty());
+//        assert(!empty());
         return *GetGaplessPtr(0);
     }
 
     const_reference front() const
     {
-        assert(!empty());
+        /*assert*/(!empty());
         return *GetGaplessPtr(0);
     }
 
     reference back()
     {
-        assert(!empty());
+        /*assert*/(!empty());
         return *GetGaplessPtr(size() - 1);
     }
 
     const_reference back() const
     {
-        assert(!empty());
+        /*assert*/(!empty());
         return *GetGaplessPtr(size() - 1);
     }
 
@@ -485,38 +485,38 @@ public:
 
     void pop_front()
     {
-        assert(!empty());
+        /*assert*/(!empty());
         MoveGap(0);
         m_pGapEnd++;
     }
 
     void pop_back()
     {
-        assert(!empty());
+        /*assert*/(!empty());
         MoveGap(end().p);
         m_pGapStart--;
     }
 
     reference operator[](size_type pos)
     {
-        assert(pos < size());
+        /*assert*/(pos < size());
         return *GetGaplessPtr(pos);
     }
 
     const_reference operator[](size_type pos) const
     {
-        assert(pos < size());
+        /*assert*/(pos < size());
         return *GetGaplessPtr(pos);
     }
 
     reference at(size_type pos)
     {
-        assert(pos < size());
+        /*assert*/(pos < size());
         return *GetGaplessPtr(pos);
     }
     const_reference at(size_type pos) const
     {
-        assert(pos < size());
+        /*assert*/(pos < size());
         return *GetGaplessPtr(pos);
     }
 
@@ -526,7 +526,7 @@ public:
     template<class ForwardIt>
     T* find_first_of(T* pStart,  T* pEnd, ForwardIt s_first, ForwardIt s_last) const
     {
-        assert(pStart <= pEnd);
+        /*assert*/(pStart <= pEnd);
         while (pStart < m_pGapStart &&
             pStart < pEnd)
         {
@@ -534,7 +534,7 @@ public:
             {
                 if (*pStart == *it) 
                 {
-                    assert(pStart <= pEnd);
+                    /*assert*/(pStart <= pEnd);
                     return pStart;
                 }
             }
@@ -553,13 +553,13 @@ public:
             {
                 if (*pStart == *it) 
                 {
-                    assert(pStart <= pEnd);
+                    /*assert*/(pStart <= pEnd);
                     return pStart;
                 }
             }
             pStart++;
         }
-        assert(pStart <= pEnd);
+        /*assert*/(pStart <= pEnd);
         return pEnd;
     }
 
