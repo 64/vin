@@ -18,6 +18,14 @@ struct Vec2i
     int y;
 };
 
+template<typename T>
+struct Rect
+{
+	T x, y, w, h;
+};
+
+using IntRect = Rect<int>;
+
 void message_box(const std::string& title, const std::string& msg);
 Vec3f rgb_to_vec(int color);
 [[noreturn]] void error(const std::string& msg);

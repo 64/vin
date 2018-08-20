@@ -5,7 +5,6 @@
 #include <GLFW/glfw3.h>
 #include <string>
 
-#include "rect.h"
 #include "fontface.h"
 #include "util.h"
 
@@ -16,6 +15,7 @@ public:
 	~Renderer();
     long draw_character(unsigned char c, Vec2i pos, const Vec3f& color);
     Vec2i draw_text(const std::string& text, Vec2i pos, const Vec3f& color, bool ln);
+    void draw_rectangle(IntRect pos, const Vec3f& color);
 
 private:
     GLuint compile_shader(const char *source, GLenum shader_type);

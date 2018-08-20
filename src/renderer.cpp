@@ -119,6 +119,24 @@ long Renderer::draw_character(unsigned char c, Vec2i pos, const Vec3f& color)
     return glyph.advancex;
 }
 
+void Renderer::draw_rectangle(IntRect pos, const Vec3f& color)
+{
+    float xratio = static_cast<float>(pos.x) / static_cast<float>(SCR_WIDTH);
+    float yratio = static_cast<float>(pos.y) / static_cast<float>(SCR_HEIGHT);
+    float x_offset = (xratio - 0.5f) * 2;
+    float y_offset = -(yratio - 0.5f) * 2; // Flip y-axis so origin is top left
+
+    float x_scale = static_cast<float>(pos.w) / static_cast<float>(SCR_WIDTH) * 2;
+    float y_scale = static_cast<float>(pos.h) / static_cast<float>(SCR_HEIGHT) * 2;
+
+    glUniform2f(scale_uniform_location, x_scale, y_scale); // TODO: Cache this since it rarely changes
+    glUniform2f(offset_uniform_location, x_offset, y_offset);
+    glUniform3f(color_uniform_location, color.r, color.g, color.b);
+
+    glBindTexture(GL_TEXTURE_2D, font_face.get_glyph('\0').texture);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
 Vec2i Renderer::draw_text(const std::string& text, Vec2i pos, const Vec3f& color, bool ln)
 {
     for (const auto ch : text)
