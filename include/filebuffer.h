@@ -40,13 +40,12 @@ public:
     void del();
     void backspace();
     void new_line();
-    int line_width();
+    int line_width(int delim = -1);
     void ins_char(unsigned int ch);
     int line_count();
 
 
 private:
-    Vec2i draw_coords;
     std::string name;
     std::list<GapBuffer<char>> lines;
     Cursor cur;

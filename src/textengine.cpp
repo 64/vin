@@ -12,7 +12,7 @@ TextEngine::TextEngine(Renderer& _renderer, FontFace& _font, int offset, int _fg
       gt_color(rgb_to_vec(_gt_color)), hl_cur_line(_hl_cur_line), line_numbers(_line_numbers), num_lines(0)
 {
 //    cur.pos() = line_numbers ? Vec2i{ origin.x + GUTTER_WIDTH, origin.y } : origin;
-    buffers.emplace(buffers.cend(), "test", line_numbers ? Vec2i{ origin.x + GUTTER_WIDTH, origin.y } : origin, &font);
+    buffers.emplace(buffers.cend(), "main.cpp", line_numbers ? Vec2i{ origin.x + GUTTER_WIDTH, origin.y } : origin, &font);
     active_buffer = buffers.begin();
     GapBuffer<char> buf {0, 8};
     buf.push_back('z');

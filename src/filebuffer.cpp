@@ -6,7 +6,7 @@
 #include "filebuffer.h"
 
 FileBuffer::FileBuffer(const std::string& file_name, const Vec2i& _orig, FontFace* _font)
-    : name(file_name), num_lines(0), cur(0, 0, lines.begin()), orig(_orig), draw_coords(_orig), font(_font)
+    : name(file_name), num_lines(0), cur(0, 0, lines.begin()), orig(_orig), font(_font)
 {
     std::ifstream file { file_name };
     if (file)
@@ -46,7 +46,7 @@ const std::list<GapBuffer<char>>& FileBuffer::get_lines()
 
 Vec2i FileBuffer::draw_pos()
 {
-    return {draw_coords.x, font->font_height() * (cur.pos().y + 1)};
+    return {line_width(cur.pos().x) + orig.x, font->font_height() * (cur.pos().y + 1)};
 }
 
 void FileBuffer::del()
@@ -80,7 +80,6 @@ void FileBuffer::backspace()
         --cur.line();
         --cur.pos().y;
         cur.pos().x = cur.line()->size() - 1;
-        draw_coords.x = line_width() + orig.x;
         auto it = std::next(cur.line());
         cur.line()->pop_back();
         cur.line()->insert(cur.line()->end(), it->begin(), it->end());
@@ -99,27 +98,26 @@ void FileBuffer::new_line()
     ++cur.line();
     cur.pos().x = 0;
     ++cur.pos().y;
-    draw_coords.x = orig.x;
 }
 
-int FileBuffer::line_width()
+int FileBuffer::line_width(int delim)
 {
     int total = 0;
-    std::for_each(cur.line()->begin(), cur.line()->end(), [&total, this](char ch)
-    {
-        if (ch != '\n')
-            total += font->get_glyph(ch).advancex >> 6;
-    });
+
+    if (delim != -1)
+        for (int i = 0; i < delim; ++i)
+            total += font->get_glyph(cur.line()->at(i)).advancex >> 6;
+    else
+        std::for_each(cur.line()->begin(), cur.line()->end(), [&total, this](char ch)
+        {if (ch != '\n') total += font->get_glyph(ch).advancex >> 6;});
+
     return total;
 }
 
 void FileBuffer::calc_short_line()
 {
     if (cur.pos().x > cur.line()->size() - 1)
-    {
         cur.pos().x = cur.line()->size() - 1;
-        draw_coords.x = line_width() + orig.x;
-    }
 }
 
 void FileBuffer::move_pos(Move dir)
@@ -146,17 +144,13 @@ void FileBuffer::move_pos(Move dir)
             if (cur.pos().x > 0)
             {
                 --cur.pos().x;
-                draw_coords.x -= font->get_glyph(cur.line()->at(cur.pos().x)).advancex >> 6;
             } break;
 
         case Move::RIGHT:
             if (cur.pos().x < cur.line()->size())
             {
                 if (cur.line()->at(cur.pos().x) != '\n')
-                {
-                    draw_coords.x += font->get_glyph(cur.line()->at(cur.pos().x)).advancex >> 6;
                     ++cur.pos().x;
-                }
             } break;
     }
 }
