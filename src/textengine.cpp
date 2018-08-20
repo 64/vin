@@ -20,14 +20,16 @@ TextEngine::TextEngine(Renderer& _renderer, FontFace& _font, int offset, int _fg
 
 void TextEngine::render()
 {
+    int offset = active_buffer->get_offset();
     Vec2i pos = line_numbers ? Vec2i{ origin.x + GUTTER_WIDTH, origin.y } : origin;
+    pos.y -= offset;
 
 //    if (hl_cur_line)
 //        renderer.draw_character(1, 0, cur.pos().y, cl_color); // Current Line
 
     for (const auto& line : buffers[0].get_lines())
     {
-        pos = renderer.draw_text(line.string(false), pos, fg_color, line_numbers); // Buffer text
+        pos = renderer.draw_text(line.string(false), {pos.x, pos.y}, fg_color, line_numbers); // Buffer text
     }
 
     renderer.draw_character(0, active_buffer->draw_pos(), cr_color);   // Cursor
@@ -40,7 +42,7 @@ void TextEngine::render()
             // GL with this shit
             std::string num = std::to_string(i + 1);
             int calc_x = (font.font_width() * 3) - ((num.size() - 1) * font.font_width());
-            renderer.draw_text(num, {calc_x, (i + 1) * font.font_height()}, ln_color, false);
+            renderer.draw_text(num, {calc_x, (i + 1) * font.font_height() - offset}, ln_color, false);
         }
     }
 }

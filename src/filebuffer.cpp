@@ -50,7 +50,7 @@ const std::list<GapBuffer<char>>& FileBuffer::get_lines()
 
 Vec2i FileBuffer::draw_pos()
 {
-    return {line_width(X) + orig.x, font->font_height() * (Y + 1)};
+    return {line_width(X) + orig.x, static_cast<int>((font->font_height() * (Y + 1)) - scroll_offset)};
 }
 
 void FileBuffer::del()
@@ -70,6 +70,7 @@ void FileBuffer::del()
     {
         LINE->erase(LINE->begin() + X);
     }
+    check_for_offset();
 }
 
 void FileBuffer::backspace()
@@ -88,6 +89,7 @@ void FileBuffer::backspace()
         LINE->pop_back();
         LINE->insert(LINE->end(), it->begin(), it->end());
         lines.erase(it);
+        check_for_offset();
     }
 }
 
@@ -101,6 +103,7 @@ void FileBuffer::new_line()
     ++LINE;
     ++Y;
     X = 0;
+    check_for_offset();
 }
 
 int FileBuffer::line_width(int delim)
@@ -128,11 +131,14 @@ void FileBuffer::move_pos(Move dir)
     switch (dir)
     {
         case Move::UP:
+            if ((font->font_height() * (Y + 1)) - font->font_height() < scroll_offset)
+                scroll_offset -= font->font_height();
             if (LINE != lines.begin())
             {
                 --LINE;
                 --Y;
                 calc_short_line();
+                check_for_offset();
             } break;
 
         case Move::DOWN:
@@ -141,6 +147,7 @@ void FileBuffer::move_pos(Move dir)
                 ++LINE;
                 ++Y;
                 calc_short_line();
+                check_for_offset();
             } break;
 
         case Move::LEFT:
@@ -158,8 +165,22 @@ void FileBuffer::move_pos(Move dir)
     }
 }
 
+void FileBuffer::check_for_offset()
+{
+    int pos = (font->font_height() * (Y + 1));
+    if (pos > SCR_HEIGHT + scroll_offset)
+        scroll_offset += font->font_height();
+    else if (pos - font->font_height() < scroll_offset)
+        scroll_offset -= font->font_height();
+}
+
 int FileBuffer::line_count()
 {
     return lines.size();
+}
+
+unsigned int FileBuffer::get_offset()
+{
+    return scroll_offset;
 }
 

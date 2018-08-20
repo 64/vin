@@ -21,8 +21,8 @@ void character_callback(GLFWwindow* window, unsigned int codepoint);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
-static int SCR_WIDTH = 800;
-static int SCR_HEIGHT = 600;
+int SCR_WIDTH = 800;
+int SCR_HEIGHT = 600;
 
 static std::queue<unsigned int> buffer;
 
@@ -70,7 +70,7 @@ int main(int, char**)
                 config.option<int>("tab_spaces"),
                 config.option<bool>("block_cursor") };
 
-    Renderer renderer{ font, SCR_WIDTH, SCR_HEIGHT, config.option<int>("bg_color")};
+    Renderer renderer{ font, config.option<int>("bg_color")};
 
     TextEngine engine{ renderer, font,
                 config.option<int>("font_size"),

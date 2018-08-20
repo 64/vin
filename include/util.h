@@ -22,4 +22,7 @@ void message_box(const std::string& title, const std::string& msg);
 Vec3f rgb_to_vec(int color);
 [[noreturn]] void error(const std::string& msg);
 
+extern int SCR_WIDTH;
+extern int SCR_HEIGHT;
+
 #endif // UTIL_H

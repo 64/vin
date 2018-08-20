@@ -42,8 +42,8 @@ const float quad_vertices[] = {
     0.0f, 0.0f
 };
 
-Renderer::Renderer(const FontFace& font, const int& width, const int& height, int _bg_color)
-    : font_face(font), screen_width(width), screen_height(height), bg_color(rgb_to_vec(_bg_color))
+Renderer::Renderer(const FontFace& font, int _bg_color)
+    : font_face(font), bg_color(rgb_to_vec(_bg_color))
 {
     // TODO: OpenGL error checking with glGetError
     glClearColor(bg_color.r, bg_color.g, bg_color.b, 1.0f);
@@ -101,13 +101,13 @@ long Renderer::draw_character(unsigned char c, Vec2i pos, const Vec3f& color)
     int xpos = pos.x + glyph.bearingx;
     int ypos = pos.y + glyph.height - glyph.bearingy;
 
-    float xratio = static_cast<float>(xpos) / static_cast<float>(screen_width);
-    float yratio = static_cast<float>(ypos) / static_cast<float>(screen_height);
+    float xratio = static_cast<float>(xpos) / static_cast<float>(SCR_WIDTH);
+    float yratio = static_cast<float>(ypos) / static_cast<float>(SCR_HEIGHT);
     float x_offset = (xratio - 0.5f) * 2;
     float y_offset = -(yratio - 0.5f) * 2; // Flip y-axis so origin is top left
 
-    float x_scale = static_cast<float>(glyph.width) / static_cast<float>(screen_width) * 2;
-    float y_scale = static_cast<float>(glyph.height) / static_cast<float>(screen_height) * 2;
+    float x_scale = static_cast<float>(glyph.width) / static_cast<float>(SCR_WIDTH) * 2;
+    float y_scale = static_cast<float>(glyph.height) / static_cast<float>(SCR_HEIGHT) * 2;
 
     glUniform2f(scale_uniform_location, x_scale, y_scale); // TODO: Cache this since it rarely changes
     glUniform2f(offset_uniform_location, x_offset, y_offset);

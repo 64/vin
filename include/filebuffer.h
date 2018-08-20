@@ -34,16 +34,19 @@ class FileBuffer
 public:
     FileBuffer(const std::string& file_name, const Vec2i& orig, FontFace* font);
     const std::list<GapBuffer<char>>& get_lines();
-    void calc_short_line();
     Vec2i draw_pos();
     void move_pos(Move dir);
     void del();
     void backspace();
     void new_line();
     int line_width(int delim = -1);
+    unsigned int get_offset();
     void ins_char(unsigned int ch);
     int line_count();
 
+private:
+    void calc_short_line();
+    void check_for_offset();
 
 private:
     std::string name;

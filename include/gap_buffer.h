@@ -15,15 +15,6 @@
 #define DEBUG_FILL_GAP
 #endif
 
-// An STL-friendly GapBuffer
-// This is my attempt at a Gap buffer which looks a bit like a vector
-// The idea is that to the client, it looks like contiguous memory, but internally there is a gap
-// Any modification operations may involve moving (and possibly) resizing the gap
-// A Gap buffer is a special type of buffer that has favourable performance when inserting/removing entries
-// in a local region.  Thus memory moving cost is amortised
-// Editors like emacs use it to efficiently manage an edit buffer.
-// For the curious, you can ask emacs for the gap position and size by evaluating (gap-size), (gap-position)
-
 template <class T, class A = std::allocator<T>>
 class GapBuffer
 {
