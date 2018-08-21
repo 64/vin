@@ -9,7 +9,8 @@
 #define LINE cur.line()     // Current line
 
 FileBuffer::FileBuffer(const std::string& file_name, const Vec2i& _orig, FontFace* _font)
-    : name(file_name), num_lines(0), cur(0, 0, lines.begin()), orig(_orig), font(_font), scroll_offset(0)
+    : name(file_name), num_lines(0), cur(0, 0, lines.begin()), orig(_orig), font(_font),
+      scroll_offset(0), saved_x(0)
 {
     std::ifstream file { file_name };
     if (file)
@@ -203,9 +204,13 @@ void FileBuffer::check_for_offset()
 int FileBuffer::ch_width()
 {
     if (!LINE->empty())
-        return font->get_glyph(LINE->at(X)).advancex >> 6;
-    else
-        return font->font_width();
+    {
+        Glyph ch = font->get_glyph(LINE->at(X));
+        if (ch.advancex)
+            return ch.advancex >> 6;
+        else
+            return font->font_width();
+    }
 }
 
 int FileBuffer::ch()

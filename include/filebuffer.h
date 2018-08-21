@@ -54,11 +54,12 @@ private:
 private:
     std::string name;
     std::list<GapBuffer<char>> lines;
-    Cursor cur;
     int num_lines;
+    Cursor cur;
     Vec2i orig;
     FontFace* font;
     int scroll_offset;
+    int saved_x;
 
 };
 

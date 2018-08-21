@@ -1,7 +1,6 @@
 #include <string>
 #include <fstream>
 #include <cctype>
-#include <iostream>
 
 #include "textengine.h"
 #include "renderer.h"
@@ -13,7 +12,6 @@ TextEngine::TextEngine(Renderer& _renderer, FontFace& _font, int offset, int _bg
       cl_color(rgb_to_vec(_cl_color)), cr_color(rgb_to_vec(_cr_color)), ln_color(rgb_to_vec(_ln_color)),
       gt_color(rgb_to_vec(_gt_color)), hl_cur_line(_hl_cur_line), line_numbers(_line_numbers), block_caret(_block_caret)
 {
-//    cur.pos() = line_numbers ? Vec2i{ origin.x + GUTTER_WIDTH, origin.y } : origin;
     buffers.emplace(buffers.cend(), "main.cpp", line_numbers ? Vec2i{ origin.x + GUTTER_WIDTH, origin.y } : origin, &font);
     active_buffer = buffers.begin();
     GapBuffer<char> buf {0, 8};
@@ -26,10 +24,11 @@ void TextEngine::render()
     Vec2i pos = line_numbers ? Vec2i{ origin.x + GUTTER_WIDTH, origin.y } : origin;
     pos.y -= offset;
 
+    // Highlight current line
     if (hl_cur_line)
-        renderer.draw_character(1, {0, active_buffer->draw_pos().y}, cl_color); // Current Line
-//        renderer.draw_rectangle({0, active_buffer->draw_pos().y, SCR_WIDTH, font.font_height()}, cl_color);
+        renderer.draw_rectangle({0, active_buffer->draw_pos().y + font.font_cleft(), SCR_WIDTH, font.font_height() + font.font_cleft()}, cl_color);
 
+    // Draw onscreen text
     for (const auto& line : active_buffer->get_lines())
     {
         pos = renderer.draw_text(line.string(false), pos, fg_color, line_numbers); // Buffer text
@@ -40,11 +39,10 @@ void TextEngine::render()
     int caret_width = block_caret ? active_buffer->ch_width() : 2;
     renderer.draw_rectangle({cur.x, cur.y + font.font_cleft(), caret_width, font.font_height() + font.font_cleft()}, cr_color);
 
+    // Draw current character over the block caret for visibility
     int c = active_buffer->ch();
-    if (!std::isspace(c))
-    {
+    if (block_caret && !std::isspace(c) && c)
         renderer.draw_character(c, {cur.x, cur.y - font.font_cleft()}, bg_color);
-    }
 
     if (line_numbers)
     {

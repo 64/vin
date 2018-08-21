@@ -130,7 +130,7 @@ FontFace::FontFace(FT_Library& library, const std::string& path, unsigned int _h
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte alignment
 
     // Loop through all ASCII characters and render them to textures
-    for (unsigned char c = 3; c < 255; c++)
+    for (unsigned char c = 1; c < 255; c++)
     {
         if (FT_Load_Char(face, c, FT_LOAD_RENDER))
             error("Failed to load font character '" + std::string{static_cast<char>(c)} + "' from path: " + path);
@@ -190,7 +190,6 @@ FontFace::FontFace(FT_Library& library, const std::string& path, unsigned int _h
     // TODO: Will using face->glyph->bitmap_top from the last rendered character cause any problems?
     glyphs.emplace(0, Glyph { texture, face->glyph->bitmap.width, static_cast<unsigned int>(height) + cleft,
             0, height, 0, 0 });
-    glyphs.emplace(1, Glyph { texture, 64000, static_cast<unsigned int>(height) + cleft, 0, height, 0, 0 });
 
     FT_Done_Face(face);
 }

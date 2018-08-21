@@ -14,7 +14,7 @@ Vec3f rgb_to_vec(int color)
     };
 }
 
-void error(const std::string& msg)
+[[noreturn]] void error(const std::string& msg)
 {
     std::cerr << msg << std::endl;
     glfwTerminate();
