@@ -78,12 +78,12 @@ void ConfigReader::error(ErrorCode err, const std::string& opt, const std::strin
     {
         case ErrorCode::OPT:
         {
-            message_box("Invalid Option", "Found invalid option '" + opt + "' in config.");
+            message_box("Invalid Option", "Found invalid option '" + opt + "' in config.", true);
         } break;
 
         case ErrorCode::VALUE:
         {
-            message_box("Invalid Value", "Invalid Value '" + val + "' being assigned to option '" + opt + "'.");
+            message_box("Invalid Value", "Invalid Value '" + val + "' being assigned to option '" + opt + "'.", true);
         } break;
 
         case ErrorCode::OK:

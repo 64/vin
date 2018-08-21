@@ -103,9 +103,7 @@ void TextEngine::append(unsigned int ch)
 
         case 321:
             if (active_buffer->offset() > 0)
-            {
                 active_buffer->offset() -= font.font_height();
-            }
                 break;
 
         case 320:

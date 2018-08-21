@@ -142,7 +142,6 @@ void FileBuffer::jump_to_caret()
     {
         scroll_offset += draw_pos().y - font->font_height() * (SCR_HEIGHT / font->font_height());
     }
-
 }
 
 void FileBuffer::move_pos(Move dir)

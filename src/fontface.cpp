@@ -112,7 +112,7 @@ FontFace::FontFace(FT_Library& library, const std::string& path, unsigned int _h
 {
     FT_Face face;
     if (FT_New_Face(library, path.c_str(), 0, &face))
-        error("Failed to load font from path: " + path);
+        message_box("Font Error", "Failed to load font: " + path, true);
 
     // TODO: See whether this is necessary on high-dpi displays (retina, 4k etc)
     /*int mon_width, mon_height;

@@ -15,12 +15,11 @@
 #include "textengine.h"
 
 void process_input(GLFWwindow *window);
-[[noreturn]] void error(const std::string& msg);
 void message_box(const std::string& title, const std::string& msg);
 void character_callback(GLFWwindow* window, unsigned int codepoint);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 int SCR_WIDTH = 800;
 int SCR_HEIGHT = 600;
@@ -47,7 +46,8 @@ int main(int, char**)
 
     GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Vin Editor", nullptr, nullptr);
     if (!window)
-        error("Failed to create GLFW window");
+        message_box("Error", "Failed to create GLFW window", true);
+
 
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -57,11 +57,11 @@ int main(int, char**)
     glfwSwapInterval(1);
 
     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
-        error("Failed to initialize GLAD");
+        message_box("Error", "Failed to initialize GLAD", true);
 
     FT_Library library;
     if (FT_Init_FreeType(&library))
-        error("Failed to initialize Freetype");
+        message_box("Error", "Failed to initialize Freetype", true);
 
     std::string font_path = (config.option<bool>("use_font_path") ? 
             config.option<std::string>("font_path") : 

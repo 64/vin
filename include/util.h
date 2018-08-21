@@ -26,7 +26,7 @@ struct Rect
 
 using IntRect = Rect<int>;
 
-void message_box(const std::string& title, const std::string& msg);
+void message_box(const std::string& title, const std::string& msg, bool err);
 Vec3f rgb_to_vec(int color);
 [[noreturn]] void error(const std::string& msg);
 

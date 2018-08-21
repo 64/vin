@@ -20,7 +20,7 @@
 #if defined(_WIN32) || defined(WIN32)
 void MessageBoxWindows(const std::string& title, const std::string& message)
 {
-    MessageBox(NULL, message.c_str(), title.c_str(), MB_OK | MB_ICONERROR);
+    MessageBox(NULL, message.c_str(), title.c_str(), MB_OK);
 }
 #endif
 
@@ -247,7 +247,7 @@ cleanup:
 }
 #endif
 
-void message_box(const std::string& title, const std::string& msg)
+void message_box(const std::string& title, const std::string& msg, bool err)
 {
 #ifdef linux
     MessageBoxX11(title.c_str(), msg.c_str());
@@ -257,4 +257,7 @@ void message_box(const std::string& title, const std::string& msg)
     // then remove this comment
     MessageBoxWindows(title, msg);
 #endif
+
+    if (err)
+        std::exit(EXIT_FAILURE);
 }
