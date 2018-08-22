@@ -17,10 +17,9 @@ struct Span
     Span(const char* _start, std::size_t _length, bool _original)
         : start(_start), length(_length), original(_original) {}
     const char* start;
-    size_t      length;
+    std::size_t length;
     bool        original;
 };
-
 
 class Sequence
 {
@@ -42,6 +41,7 @@ private:
     const char*             original;
     std::array<char, 4096>  modify;
     std::size_t             offset;
+    std::size_t             size;
 
 };
 

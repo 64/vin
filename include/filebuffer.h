@@ -47,13 +47,13 @@ public:
     void tab();
     void new_line();
     const std::list<Span>& buffer_data();
-    std::pair<int, int> line_width(int delim = -1);
+    std::pair<int, int> line_width();
     int& offset();
     void ins_char(unsigned int ch);
     int ch_width(int offset = 0);
     void jump_to_caret();
     void save_to_file();
-    int ch();
+    int ch(int offset = 0);
     void forward();
     void backward();
     void downward();
@@ -72,7 +72,7 @@ private:
     Vec2i orig;
     FontFace* font;
     int scroll_offset;
-    int saved_x;
+    int num_chars;
 
 };
 

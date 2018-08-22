@@ -5,6 +5,7 @@ Sequence::Sequence(const std::string& file_name) : chain(), offset(0)
     int fd = open(file_name.c_str(), O_RDONLY);
     struct stat sb;
     fstat(fd, &sb);
+    size = sb.st_size;
     original = static_cast<const char*>(mmap(nullptr, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0));
 
     chain.emplace_back(nullptr, 0, 0); // Dummy span
@@ -71,7 +72,7 @@ char Sequence::get_ch(std::size_t index)
         if (index >= total && index <= total + it->length)
         {
             std::size_t length = it->length - (total + it->length - index);
-            return it->start[length];
+            return size ? it->start[length] : 0;
         }
         else
         {

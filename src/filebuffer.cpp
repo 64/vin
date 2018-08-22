@@ -10,9 +10,18 @@
 
 FileBuffer::FileBuffer(const std::string& file_name, const Vec2i& _orig, FontFace* _font)
     : name(file_name), num_lines(0), cur(0, 0/*, data.begin()*/), orig(_orig), font(_font),
-      scroll_offset(0), saved_x(0), data{file_name}
+      scroll_offset(0), num_chars(0), data{file_name}
 {
+    for (const auto& span : data.pieces())
+        for (std::size_t i = 0; i < span.length; ++i)
+        {
+            if (span.start[i] == '\n')
+                ++num_lines;
+            ++num_chars;
+        }
 
+    if (!num_lines)
+        num_lines = 1;
 }
 
 void FileBuffer::save_to_file()
@@ -38,36 +47,42 @@ void FileBuffer::ins_char(unsigned int ch)
 
 void FileBuffer::forward()
 {
-//    if (cur.buffer != data.end())
-//    {
-//        cur.advance += ch_width();
-//        ++cur.buffer;
-//        ++cur.col;
-//    }
+    if (cur.offset < num_chars - 1)
+    {
+        if (ch() == '\n' && cur.y < num_lines - 1)
+        {
+            ++cur.y;
+            cur.x = 0;
+            cur.advance = 0;
+        }
+        else
+        {
+            cur.advance += ch_width();
+            std::cout << ch_width() << std::endl;
+            ++cur.x;
+        }
 
-//    if (*(cur.buffer - 1) == '\n')
-//    {
-//        ++cur.line_y;
-//        cur.col = 0;
-//        cur.advance = 0;
-//    }
+        ++cur.offset;
+    }
 }
 
 void FileBuffer::backward()
 {
-//    if (cur.buffer != data.begin())
-//    {
-//        cur.advance -= ch_width(-1);
-//        --cur.buffer;
-//        --cur.col;
-//    }
+    if (cur.offset > 0)
+    {
+        --cur.offset;
 
-//    if (*cur.buffer == '\n')
-//    {
-//        --cur.line_y;
-//        cur.advance = line_width().second;
-//        cur.col = line_width().first;
-//    }
+        if (ch() == '\n')
+        {
+            --cur.y;
+            cur.advance = line_width().second;
+        }
+        else
+        {
+            cur.advance -= ch_width();
+            --cur.x;
+        }
+    }
 }
 
 void FileBuffer::downward()
@@ -106,7 +121,7 @@ void FileBuffer::upward()
 
 int FileBuffer::line_count()
 {
-    return num_lines + 1;
+    return num_lines;
 }
 
 Vec2i FileBuffer::draw_pos()
@@ -175,21 +190,39 @@ void FileBuffer::new_line()
 //    check_for_offset();
 }
 
-std::pair<int, int> FileBuffer::line_width(int delim)
+std::pair<int, int> FileBuffer::line_width()
 {
-//    int advance = 0;
-//    int chars   = 0;
-//    auto it = cur.buffer;
+    int total = 0;
+    for (auto it = std::next(data.pieces().begin()); it != data.pieces().end(); ++it)
+    {
+        if (cur.offset >= total && cur.offset <= total + it->length)
+        {
+            int advance = 0;
+            int chars   = 0;
+            std::size_t length = it->length - (total + it->length - cur.offset);
+            for (int i = 0; i != '\n'; i = it->start[length], ++chars)
+            {
+                advance += i ? font->get_glyph(it->start[length]).advancex >> 6 : 0;
 
-//    while (*(--cur.buffer) != '\n' && cur.buffer != data.begin() - 1)
-//    {
-//        advance += ch_width();
-//        ++chars;
-//    }
+                if (length-- == 0)
+                {
+                    --it;
+                    length = it->length;
+                }
 
-//    cur.buffer = it;
+                if (it->start + length == 0)
+                    break;
+            }
 
-//    return {chars, advance};
+            return {chars, advance};
+        }
+        else
+        {
+            total += it->length;
+        }
+    }
+
+    return {0, 0};
 }
 
 void FileBuffer::calc_short_line()
@@ -244,16 +277,16 @@ void FileBuffer::check_for_offset()
 
 int FileBuffer::ch_width(int offset)
 {
-        Glyph ch = font->get_glyph(data.get_ch(cur.offset));
-        if (ch.advancex)
-            return ch.advancex >> 6;
-        else
-            return font->font_width();
+    Glyph ch = font->get_glyph(data.get_ch(cur.offset));
+    if (ch.advancex)
+        return ch.advancex >> 6;
+    else
+        return font->font_width();
 }
 
-int FileBuffer::ch()
+int FileBuffer::ch(int offset)
 {
-    data.get_ch(cur.offset);
+    data.get_ch(cur.offset + offset);
 }
 
 int& FileBuffer::offset()
