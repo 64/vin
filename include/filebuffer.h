@@ -3,8 +3,9 @@
 
 #include <list>
 #include <string>
+#include <algorithm>
+#include <iostream>
 
-#include "gap_buffer.h"
 #include "fontface.h"
 #include "util.h"
 #include "piecetable.h"
@@ -19,26 +20,24 @@ enum class Move
 
 class Cursor
 {
-    using line_t = GapBuffer<char>::iterator;
 public:
-    Cursor(int _x, int _y/*, line_t _line*/)
-        : coords{_x, _y}, /*buffer{_line},*/
-          advance{0}, /*line_y{0}, col{0}*/
-          x{0}, y{0} , offset{0} {}
+    Cursor(int _x, int _y)
+        : advance{0}, x{0},
+          y{0} , offset{0},
+          hard_x{0} {}
 
 public:
-    Vec2i coords;
-//    line_t buffer;
     int advance;
-    int x, y, offset;
-//    int line_y;
-//    int col;
+    int x, y;
+    int hard_x;
+    std::size_t offset;
 };
 
 class FileBuffer
 {
 public:
-    FileBuffer(const std::string& file_name, const Vec2i& orig, FontFace* font);
+    FileBuffer(const std::string& file_name,
+               const Vec2i& orig, FontFace* font);
     int line_count();
     Vec2i draw_pos();
     void move_pos(Move dir);
@@ -53,7 +52,7 @@ public:
     int ch_width(int offset = 0);
     void jump_to_caret();
     void save_to_file();
-    int ch(int offset = 0);
+    int  ch(int offset = 0);
     void forward();
     void backward();
     void downward();
@@ -66,7 +65,6 @@ private:
 private:
     std::string name;
     Sequence data;
-//    GapBuffer<char> data;
     int num_lines;
     Cursor cur;
     Vec2i orig;

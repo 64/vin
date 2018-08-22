@@ -20,20 +20,9 @@ Sequence::~Sequence()
 
 void Sequence::insert(std::size_t index, const std::string& text)
 {
-    std::size_t total = 0;
-    auto span = chain.begin();
-
     // Find span that the index corresponds to
-    for (auto it = chain.begin(); it != chain.end(); ++it)
-    {
-        if (index >= total && index <= total + it->length)
-        {
-            span = it;
-            break;
-        }
-
-        total += it->length;
-    }
+    std::size_t total = 0;
+    auto span = get_span(index, total);
 
     // Add text to modify buffer and retrieve pointer to it
     const char* start = append(text);
@@ -66,19 +55,22 @@ void Sequence::remove(std::size_t from, std::size_t to)
 
 char Sequence::get_ch(std::size_t index)
 {
-    int total = 0;
+    std::size_t total = 0;
+    auto it = get_span(index, total);
+    std::size_t length = it->length - (total + it->length - index);
+    return size ? it->start[length] : 0;
+}
+
+std::list<Span>::iterator Sequence::get_span(std::size_t index, std::size_t& total)
+{
+    total = 0;
     for (auto it = std::next(chain.begin()); it != chain.end(); ++it)
-    {
         if (index >= total && index <= total + it->length)
-        {
-            std::size_t length = it->length - (total + it->length - index);
-            return size ? it->start[length] : 0;
-        }
+            return it;
         else
-        {
             total += it->length;
-        }
-    }
+
+    return chain.begin();
 }
 
 const std::list<Span>& Sequence::pieces()

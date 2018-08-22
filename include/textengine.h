@@ -8,7 +8,6 @@
 
 #include "util.h"
 #include "renderer.h"
-#include "gap_buffer.h"
 #include "filebuffer.h"
 
 class TextEngine

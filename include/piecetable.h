@@ -30,8 +30,9 @@ public:
     void insert(std::size_t index, const std::string& text);
     void remove(std::size_t from, std::size_t to);
     char get_ch(std::size_t index);
-    const std::list<Span>& pieces();
     void print();
+    std::list<Span>::iterator get_span(std::size_t index, std::size_t& total);
+    const std::list<Span>&    pieces();
 
 private:
     const char* append(const std::string& text);
