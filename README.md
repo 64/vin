@@ -1,6 +1,7 @@
 # Vin
 
 Cross platform OpenGL-based text editor written in C++.
+![image](https://i.imgur.com/jR29CnM.png)
 
 ## Building
 
