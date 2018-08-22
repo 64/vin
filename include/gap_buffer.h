@@ -7,7 +7,7 @@
 #include <climits>
 #include <cstring>
 #include <string>
-#include <iostream>
+//#include <iostream>
 
 #ifdef __DEBUG__
 #define DEBUG_FILL_GAP for (auto* pCh = m_pGapStart; pCh < m_pGapEnd; pCh++) { *pCh = '@'; }
@@ -384,7 +384,6 @@ public:
     iterator insert(iterator pt, T value)
     {
         EnsureGapPosAndSize(pt.p-1, sizeof(T));
-//        std::cout << pt.p << std::endl;
 
         *(m_pStart + pt.p - 1) = value;
         m_pGapStart += 1;
@@ -411,7 +410,7 @@ public:
     
     iterator erase(const_iterator start)
     {
-//        assert(start.p < size());
+        assert(start.p < size());
         MoveGap(start.p);
         m_pGapEnd++;
 
@@ -422,25 +421,25 @@ public:
 
     reference front()
     {
-//        assert(!empty());
+        assert(!empty());
         return *GetGaplessPtr(0);
     }
 
     const_reference front() const
     {
-        /*assert*/(!empty());
+        assert(!empty());
         return *GetGaplessPtr(0);
     }
 
     reference back()
     {
-        /*assert*/(!empty());
+        assert(!empty());
         return *GetGaplessPtr(size() - 1);
     }
 
     const_reference back() const
     {
-        /*assert*/(!empty());
+        assert(!empty());
         return *GetGaplessPtr(size() - 1);
     }
 
@@ -476,38 +475,38 @@ public:
 
     void pop_front()
     {
-        /*assert*/(!empty());
+        assert(!empty());
         MoveGap(0);
         m_pGapEnd++;
     }
 
     void pop_back()
     {
-        /*assert*/(!empty());
+        assert(!empty());
         MoveGap(end().p);
         m_pGapStart--;
     }
 
     reference operator[](size_type pos)
     {
-        /*assert*/(pos < size());
+        assert(pos < size());
         return *GetGaplessPtr(pos);
     }
 
     const_reference operator[](size_type pos) const
     {
-        /*assert*/(pos < size());
+        assert(pos < size());
         return *GetGaplessPtr(pos);
     }
 
     reference at(size_type pos)
     {
-        /*assert*/(pos < size());
+        assert(pos < size());
         return *GetGaplessPtr(pos);
     }
     const_reference at(size_type pos) const
     {
-        /*assert*/(pos < size());
+        assert(pos < size());
         return *GetGaplessPtr(pos);
     }
 

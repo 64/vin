@@ -7,6 +7,7 @@
 #include "gap_buffer.h"
 #include "fontface.h"
 #include "util.h"
+#include "piecetable.h"
 
 enum class Move
 {
@@ -18,34 +19,45 @@ enum class Move
 
 class Cursor
 {
-    using line_t = std::list<GapBuffer<char>>::iterator;
+    using line_t = GapBuffer<char>::iterator;
 public:
-    Cursor(int _x, int _y, line_t _line) : coords{_x, _y}, buffer{_line} {}
-    Vec2i& pos()   { return coords; }
-    line_t& line() { return buffer; }
+    Cursor(int _x, int _y/*, line_t _line*/)
+        : coords{_x, _y}, /*buffer{_line},*/
+          advance{0}, /*line_y{0}, col{0}*/
+          x{0}, y{0} , offset{0} {}
 
-private:
+public:
     Vec2i coords;
-    line_t buffer;
+//    line_t buffer;
+    int advance;
+    int x, y, offset;
+//    int line_y;
+//    int col;
 };
 
 class FileBuffer
 {
 public:
     FileBuffer(const std::string& file_name, const Vec2i& orig, FontFace* font);
-    const std::list<GapBuffer<char>>& get_lines();
+    int line_count();
     Vec2i draw_pos();
     void move_pos(Move dir);
     void del();
     void backspace();
     void tab();
     void new_line();
-    int line_width(int delim = -1);
+    const std::list<Span>& buffer_data();
+    std::pair<int, int> line_width(int delim = -1);
     int& offset();
     void ins_char(unsigned int ch);
-    int ch_width();
+    int ch_width(int offset = 0);
     void jump_to_caret();
+    void save_to_file();
     int ch();
+    void forward();
+    void backward();
+    void downward();
+    void upward();
 
 private:
     void calc_short_line();
@@ -53,7 +65,8 @@ private:
 
 private:
     std::string name;
-    std::list<GapBuffer<char>> lines;
+    Sequence data;
+//    GapBuffer<char> data;
     int num_lines;
     Cursor cur;
     Vec2i orig;

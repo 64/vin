@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include <vector>
+#include <memory>
 
 #include "util.h"
 #include "renderer.h"
@@ -36,8 +37,8 @@ private:
     bool line_numbers;
     bool block_caret;
     int num_lines;
-    std::vector<FileBuffer> buffers;
-    std::vector<FileBuffer>::iterator active_buffer;
+    std::vector<std::unique_ptr<FileBuffer>> buffers;
+    FileBuffer* active_buffer;
 };
 
 #endif

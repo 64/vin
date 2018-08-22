@@ -95,8 +95,25 @@ Renderer::~Renderer()
 
 }
 
-long Renderer::draw_character(unsigned char c, Vec2i pos, const Vec3f& color)
+Vec2i Renderer::draw_character(unsigned char c, Vec2i pos, const Vec3f& color, bool ln)
 {
+        if (c == '\n')
+        {
+//            (draw_character('|', pos, color) >> 6);
+            pos.y += font_face.font_height();
+            pos.x = ln ? (font_face.font_width() * 5) + 5 : 5; // Temp until TextEngine is functional
+            return {pos.x, pos.y};
+        }
+        else if (c == '\t')
+        {
+//            for (int i = 0; i < font_face.num_spaces(); ++i)
+//                pos.x += (draw_character(' ', pos, color) >> 6);
+        }
+        else if (c == '\0')
+        {
+//            return {pos.x, pos.y};
+        }
+
     Glyph glyph = font_face.get_glyph(c);
     int xpos = pos.x + glyph.bearingx;
     int ypos = pos.y + glyph.height - glyph.bearingy;
@@ -116,7 +133,8 @@ long Renderer::draw_character(unsigned char c, Vec2i pos, const Vec3f& color)
     glBindTexture(GL_TEXTURE_2D, glyph.texture);
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
-    return glyph.advancex;
+//    return glyph.advancex;
+    return {static_cast<int>(pos.x + (glyph.advancex >> 6)), pos.y};
 }
 
 void Renderer::draw_rectangle(IntRect pos, const Vec3f& color)
@@ -150,8 +168,13 @@ Vec2i Renderer::draw_text(const std::string& text, Vec2i pos, const Vec3f& color
         }
         else if (ch == '\t')
         {
+            Glyph glyph = font_face.get_glyph(' ');
             for (int i = 0; i < font_face.num_spaces(); ++i)
-                pos.x += (draw_character(' ', pos, color) >> 6);
+            {
+                draw_character(' ', pos, color, ln);
+                pos.x += glyph.advancex >> 6;
+            }
+
             continue;
         }
         else if (ch == '\0')
@@ -159,7 +182,9 @@ Vec2i Renderer::draw_text(const std::string& text, Vec2i pos, const Vec3f& color
             continue;
         }
 
-        pos.x += (draw_character(ch, pos, color) >> 6);
+        Glyph glyph = font_face.get_glyph(ch);
+        draw_character(ch, pos, color, ln);
+        pos.x += (glyph.advancex >> 6);
     }
 
     return {pos.x, pos.y};

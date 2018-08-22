@@ -13,7 +13,7 @@ class Renderer
 public:
     Renderer(const FontFace& font, int bg_color);
 	~Renderer();
-    long draw_character(unsigned char c, Vec2i pos, const Vec3f& color);
+    Vec2i draw_character(unsigned char c, Vec2i pos, const Vec3f& color, bool ln);
     Vec2i draw_text(const std::string& text, Vec2i pos, const Vec3f& color, bool ln);
     void draw_rectangle(IntRect pos, const Vec3f& color);
 
