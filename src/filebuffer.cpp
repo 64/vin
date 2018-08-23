@@ -78,7 +78,23 @@ void FileBuffer::backward()
 
 void FileBuffer::downward()
 {
-    // TODO
+    if (cur.y < num_lines - 1)
+    {
+        ++cur.y;
+
+        while (ch() != '\n')
+            ++cur.offset;
+        ++cur.offset;
+
+        cur.x = 0;
+        cur.advance = 0;
+        while (cur.x < cur.hard_x && ch() != '\n')
+        {
+            cur.advance += ch_width();
+            ++cur.offset;
+            ++cur.x;
+        }
+    }
 }
 
 void FileBuffer::upward()
