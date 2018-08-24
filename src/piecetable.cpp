@@ -93,7 +93,7 @@ const char* Sequence::append_text(const std::string& text)
     return &modify[offset - text.size()];
 }
 
-void Sequence::remove_char(std::size_t index, bool cont)
+void Sequence::remove_char(std::size_t index)
 {
     std::size_t total;
     auto active = get_span(index, total);

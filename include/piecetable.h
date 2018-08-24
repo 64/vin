@@ -31,7 +31,7 @@ public:
     void insert_text(std::size_t index, const std::string& text);
     const char* append_text(const std::string& text);
     void append_char(char ch);
-    void remove_char(std::size_t index, bool cont);
+    void remove_char(std::size_t index);
     char get_ch(std::size_t index);
     void print();
     const char* start();

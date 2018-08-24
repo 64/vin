@@ -21,24 +21,7 @@ FileBuffer::FileBuffer(const std::string& file_name, const Vec2i& _orig, FontFac
 
 void FileBuffer::save_to_file()
 {
-    FILE *fp;
-    char path[1035];
-
-    fp = popen("pwd", "r");
-    if (fp == NULL)
-    {
-      printf("Failed to run command\n" );
-      exit(1);
-    }
-
-    /* Read the output a line at a time - output it. */
-    while (fgets(path, sizeof(path)-1, fp) != NULL) {
-      printf("%s", path);
-    }
-
-    pclose(fp);
-
-    fflush(stdout);
+    data.print();
 }
 
 const std::list<Span>& FileBuffer::buffer_data()
@@ -58,9 +41,8 @@ void FileBuffer::ins_char(unsigned int ch)
         data.append_char(ch);
     }
 
-    forward();
-
     ++num_chars;
+    forward();
 }
 
 void FileBuffer::forward()
@@ -70,8 +52,8 @@ void FileBuffer::forward()
         if (ch() == '\n' && cur.y < num_lines - 1)
         {
             ++cur.y;
-            cur.x = 0;
-            cur.hard_x = 0;
+            cur.x       = 0;
+            cur.hard_x  = 0;
             cur.advance = 0;
         }
         else
@@ -82,7 +64,6 @@ void FileBuffer::forward()
         }
 
         ++cur.offset;
-//        append = false;
     }
 }
 
@@ -171,6 +152,7 @@ void FileBuffer::tab()
 
 void FileBuffer::backspace()
 {
+    append = false;
     if (cur.offset > 0)
     {
         if (!remove)
@@ -181,22 +163,25 @@ void FileBuffer::backspace()
         if (ch() == '\n')
             --num_lines;
 
-        data.remove_char(cur.offset, remove);
+        data.remove_char(cur.offset);
         --num_chars;
     }
 }
 
 void FileBuffer::new_line()
 {
-    // TODO
+    data.insert_char(cur.offset, '\n');
+    ++num_chars;
+    ++num_lines;
+    forward();
 }
 
 std::pair<int, int> FileBuffer::line_width()
 {
     std::size_t total = 0;
-    auto it = data.get_span(cur.offset, total);
-    int advance = 0;
-    int chars   = 0;
+    auto it      = data.get_span(cur.offset, total);
+    int  advance = 0;
+    int  chars   = 0;
     std::size_t length = it->length - (total + it->length - cur.offset);
     for (int i = 0; i != '\n'; i = it->start[length])
     {
