@@ -30,13 +30,13 @@ public:
     void insert_char(std::size_t index, char ch);
     void insert_text(std::size_t index, const std::string& text);
     const char* append_text(const std::string& text);
-    void remove(std::size_t from, std::size_t to);
+    void append_char(char ch);
+    void remove_char(std::size_t index, bool cont);
     char get_ch(std::size_t index);
     void print();
     const char* start();
     std::list<Span>::iterator get_span(std::size_t index, std::size_t& total);
     const std::list<Span>&    pieces();
-    void append_char(char ch);
 
 private:
 

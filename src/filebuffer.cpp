@@ -1,8 +1,9 @@
 #include "filebuffer.h"
+#include <cstdlib>
 
 FileBuffer::FileBuffer(const std::string& file_name, const Vec2i& _orig, FontFace* _font)
-    : name(file_name), num_lines(0), cur(0, 0/*, data.begin()*/), orig(_orig), font(_font),
-      scroll_offset(0), num_chars(0), data(file_name), append(false)
+    : name(file_name), num_lines(0), cur(0, 0), orig(_orig), font(_font),
+      scroll_offset(0), num_chars(0), data(file_name), append(false), remove(false)
 {
     for (const auto& span : data.pieces())
         for (std::size_t i = 0; i < span.length; ++i)
@@ -14,11 +15,30 @@ FileBuffer::FileBuffer(const std::string& file_name, const Vec2i& _orig, FontFac
 
     if (!num_lines)
         num_lines = 1;
+
+    data.print();
 }
 
 void FileBuffer::save_to_file()
 {
-    // TODO
+    FILE *fp;
+    char path[1035];
+
+    fp = popen("pwd", "r");
+    if (fp == NULL)
+    {
+      printf("Failed to run command\n" );
+      exit(1);
+    }
+
+    /* Read the output a line at a time - output it. */
+    while (fgets(path, sizeof(path)-1, fp) != NULL) {
+      printf("%s", path);
+    }
+
+    pclose(fp);
+
+    fflush(stdout);
 }
 
 const std::list<Span>& FileBuffer::buffer_data()
@@ -38,11 +58,9 @@ void FileBuffer::ins_char(unsigned int ch)
         data.append_char(ch);
     }
 
-    ++cur.offset;
-    ++cur.x;
-    ++cur.hard_x;
+    forward();
+
     ++num_chars;
-    cur.advance += ch_width();
 }
 
 void FileBuffer::forward()
@@ -64,7 +82,7 @@ void FileBuffer::forward()
         }
 
         ++cur.offset;
-        append = false;
+//        append = false;
     }
 }
 
@@ -81,7 +99,6 @@ void FileBuffer::backward()
             cur.advance = size.second;
             cur.x       = size.first - 1;
             cur.hard_x  = size.first - 1;
-            std::cout << size.first << std::endl;
         }
         else
         {
@@ -89,8 +106,6 @@ void FileBuffer::backward()
             --cur.x;
             --cur.hard_x;
         }
-
-        append = false;
     }
 }
 
@@ -112,8 +127,6 @@ void FileBuffer::downward()
             ++cur.offset;
             ++cur.x;
         }
-
-        append = false;
     }
 }
 
@@ -132,8 +145,6 @@ void FileBuffer::upward()
 
         for (int i = size.first; i > cur.x; --i, --cur.offset)
             cur.advance -= ch_width();
-
-        append = false;
     }
 }
 
@@ -160,7 +171,19 @@ void FileBuffer::tab()
 
 void FileBuffer::backspace()
 {
-    // TODO
+    if (cur.offset > 0)
+    {
+        if (!remove)
+            remove = true;
+
+        backward();
+
+        if (ch() == '\n')
+            --num_lines;
+
+        data.remove_char(cur.offset, remove);
+        --num_chars;
+    }
 }
 
 void FileBuffer::new_line()
@@ -190,8 +213,6 @@ std::pair<int, int> FileBuffer::line_width()
         }
     }
 
-    data.print();
-
     return {chars, advance};
 }
 
@@ -207,6 +228,7 @@ void FileBuffer::jump_to_caret()
 
 void FileBuffer::move_pos(Move dir)
 {
+    append = remove = false;
     switch (dir)
     {
         case Move::UP:

@@ -72,6 +72,7 @@ private:
     int scroll_offset;
     int num_chars;
     bool append;
+    bool remove;
 
 };
 

@@ -93,9 +93,28 @@ const char* Sequence::append_text(const std::string& text)
     return &modify[offset - text.size()];
 }
 
-void Sequence::remove(std::size_t from, std::size_t to)
+void Sequence::remove_char(std::size_t index, bool cont)
 {
+    std::size_t total;
+    auto active = get_span(index, total);
+    if (total + active->length - 1 == index)
+    {
+        if (--active->length || active == chain.begin())
+            return;
+        else
+            chain.erase(active);
+    }
+    else
+    {
+        std::size_t length = active->length - (total + active->length - index);
+        Span one = {active->start, length, active->original};
+        Span two = {active->start + length + 1, active->length - length - 1, active->original };
+        auto it = chain.erase(active);
+        it = chain.insert(it, two);
 
+        if (one.length)
+            chain.insert(it, one);
+    }
 }
 
 char Sequence::get_ch(std::size_t index)
@@ -109,7 +128,7 @@ char Sequence::get_ch(std::size_t index)
 std::list<Span>::iterator Sequence::get_span(std::size_t index, std::size_t& total)
 {
     total = 0;
-    for (auto it = std::next(chain.begin()); it != chain.end(); ++it)
+    for (auto it = chain.begin(); it != chain.end(); ++it)
         if (index >= total && index < total + it->length)
             return it;
         else
