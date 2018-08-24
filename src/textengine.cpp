@@ -45,6 +45,7 @@ void TextEngine::render()
 
     // Draw current character over the block caret for visibility
     int c = active_buffer->ch();
+//    std::cout << (int)c << std::endl;
     if (block_caret && !std::isspace(c) && c)
         renderer.draw_character(c, {cur.x, cur.y - font.font_cleft()}, bg_color, line_numbers);
 

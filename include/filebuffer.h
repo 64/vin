@@ -71,6 +71,7 @@ private:
     FontFace* font;
     int scroll_offset;
     int num_chars;
+    bool append;
 
 };
 

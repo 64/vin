@@ -26,7 +26,7 @@ int SCR_HEIGHT = 600;
 
 static std::queue<unsigned int> buffer;
 
-int main(int, char**)
+int main(int var)
 {
 #ifdef __DEBUG__
     std::cout << "Vin Editor Debug Build" << std::endl;

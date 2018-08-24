@@ -2,7 +2,7 @@
 
 FileBuffer::FileBuffer(const std::string& file_name, const Vec2i& _orig, FontFace* _font)
     : name(file_name), num_lines(0), cur(0, 0/*, data.begin()*/), orig(_orig), font(_font),
-      scroll_offset(0), num_chars(0), data{file_name}
+      scroll_offset(0), num_chars(0), data(file_name), append(false)
 {
     for (const auto& span : data.pieces())
         for (std::size_t i = 0; i < span.length; ++i)
@@ -28,7 +28,21 @@ const std::list<Span>& FileBuffer::buffer_data()
 
 void FileBuffer::ins_char(unsigned int ch)
 {
-    // TODO
+    if (!append)
+    {
+        data.insert_char(cur.offset, ch);
+        append = true;
+    }
+    else
+    {
+        data.append_char(ch);
+    }
+
+    ++cur.offset;
+    ++cur.x;
+    ++cur.hard_x;
+    ++num_chars;
+    cur.advance += ch_width();
 }
 
 void FileBuffer::forward()
@@ -50,6 +64,7 @@ void FileBuffer::forward()
         }
 
         ++cur.offset;
+        append = false;
     }
 }
 
@@ -66,6 +81,7 @@ void FileBuffer::backward()
             cur.advance = size.second;
             cur.x       = size.first - 1;
             cur.hard_x  = size.first - 1;
+            std::cout << size.first << std::endl;
         }
         else
         {
@@ -73,6 +89,8 @@ void FileBuffer::backward()
             --cur.x;
             --cur.hard_x;
         }
+
+        append = false;
     }
 }
 
@@ -94,6 +112,8 @@ void FileBuffer::downward()
             ++cur.offset;
             ++cur.x;
         }
+
+        append = false;
     }
 }
 
@@ -112,6 +132,8 @@ void FileBuffer::upward()
 
         for (int i = size.first; i > cur.x; --i, --cur.offset)
             cur.advance -= ch_width();
+
+        append = false;
     }
 }
 
@@ -158,15 +180,17 @@ std::pair<int, int> FileBuffer::line_width()
         advance += i ? font->get_glyph(it->start[length]).advancex >> 6 : 0;
         ++chars;
 
+        if (it->start == data.start() && length == 0)
+            break;
+
         if (length-- == 0)
         {
             --it;
-            length = it->length;
+            length = it->length - 1;
         }
-
-        if (it->start + length == nullptr)
-            break;
     }
+
+    data.print();
 
     return {chars, advance};
 }
