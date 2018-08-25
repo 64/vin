@@ -19,6 +19,15 @@ struct Span
     const char* start;
     std::size_t length;
     bool        original;
+
+    Span* prev = nullptr;
+    Span* next = nullptr;
+};
+
+struct SpanRange
+{
+    Span* first;
+    Span* last;
 };
 
 class Sequence
@@ -27,7 +36,7 @@ public:
     Sequence(const std::string& file_name);
     ~Sequence();
 
-    void insert_char(std::size_t index, char ch);
+    SpanRange insert_char(std::size_t index, char ch);
     void insert_text(std::size_t index, const std::string& text);
     const char* append_text(const std::string& text);
     void append_char(char ch);
@@ -35,13 +44,16 @@ public:
     char get_ch(std::size_t index);
     void print();
     const char* start();
-    std::list<Span>::iterator get_span(std::size_t index, std::size_t& total);
-    const std::list<Span>&    pieces();
+    Span* get_span(std::size_t index, std::size_t& total);
+    Span* pieces();
+    Span* erase(Span* node);
+    Span* insert(Span* pos, Span* node);
 
 private:
 
 private:
-    std::list<Span>         chain;
+    Span*                   head;
+    Span*                   tail;
     const char*             original;
     std::array<char, 4096>  modify;
     std::size_t             offset;

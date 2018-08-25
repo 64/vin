@@ -32,10 +32,10 @@ void TextEngine::render()
         renderer.draw_rectangle({0, active_buffer->draw_pos().y + font.font_cleft(), SCR_WIDTH, line_height}, cl_color);
 
     // Draw onscreen text
-    for (const auto span : active_buffer->buffer_data())
+    for (Span* it = active_buffer->buffer_data(); it->next; it = it->next)
     {
-        for (std::size_t i = 0; i < span.length; ++i)
-            pos = renderer.draw_character(span.start[i], pos, fg_color, line_numbers);
+        for (std::size_t i = 0; i < it->length; ++i)
+            pos = renderer.draw_character(it->start[i], pos, fg_color, line_numbers);
     }
 
     // Draw caret

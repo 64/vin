@@ -1,7 +1,7 @@
 #include "piecetable.h"
 
 Sequence::Sequence(const std::string& file_name)
-    : chain(), offset(0), active(nullptr)
+    : offset(0), active(nullptr)
 {
     int fd = open(file_name.c_str(), O_RDONLY);
     struct stat sb;
@@ -9,9 +9,17 @@ Sequence::Sequence(const std::string& file_name)
     size = sb.st_size;
     original = static_cast<const char*>(mmap(nullptr, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0));
 
-    chain.emplace_back(nullptr, 0, 0); // Dummy span
-    chain.emplace_back(original, static_cast<size_t>(sb.st_size), true);
-    chain.emplace_back(nullptr, 0, 0); // Dummy span
+    head = new Span{nullptr, 0, 0};
+    tail = new Span{nullptr, 0, 0};
+
+    tail->prev = head;
+    head->next = tail;
+
+    insert(tail, new Span{original, static_cast<size_t>(sb.st_size), true});
+
+//    head->next->next = tail;
+//    tail->prev = head->next;
+//    tail->next = nullptr;
 }
 
 Sequence::~Sequence()
@@ -19,7 +27,7 @@ Sequence::~Sequence()
     // Nothing to do
 }
 
-void Sequence::insert_char(std::size_t index, char ch)
+SpanRange Sequence::insert_char(std::size_t index, char ch)
 {
     // Find span that the index corresponds to
     std::size_t total = 0;
@@ -32,27 +40,32 @@ void Sequence::insert_char(std::size_t index, char ch)
     // Handle Boundry Insertion
     if (total + span->length == index)
     {
-        active = &*chain.insert(++span, {start, 1, false});
-        return;
+        active = insert(++span, new Span{start, 1, false});
+        return {};
     }
 
     std::size_t length = span->length - (total + span->length - index);
 
-    Span one   {span->start, length, span->original};
-    Span two   {start, 1, false};
-    Span three {span->start + length, span->length - length, span->original};
+    Span* one   = new Span{span->start, length, span->original};
+    Span* two   = new Span{start, 1, false};
+    Span* three = new Span{span->start + length, span->length - length, span->original};
 
-    auto it = chain.erase(span);
+    auto it = erase(span);
+    Span* end = it;
 
     // Insert new spans
-    it = chain.insert(it, three);
-    it = chain.insert(it, two);
+    it = insert(it, three);
+    it = insert(it, two);
+
+    active = it;
 
     // Avoid inserting empty span
     if (length)
-        chain.insert(it, one);
+        insert(it, one);
+    else
+        delete one;
 
-    active = &*it;
+    return {it, three};
 }
 
 void Sequence::insert_text(std::size_t index, const std::string& text)
@@ -67,22 +80,22 @@ void Sequence::insert_text(std::size_t index, const std::string& text)
     // Handle Boundry Insertion
     if (total + span->length == index)
     {
-        chain.insert(++span, {start, text.length(), false});
+        insert(++span, new Span{start, text.length(), false});
         return;
     }
 
     std::size_t length = span->length - (total + span->length - index);
 
-    Span one   {span->start, length, span->original};
-    Span two   {start, text.size(), false};
-    Span three {span->start + length, span->length - length, span->original};
+    Span* one   = new Span{span->start, length, span->original};
+    Span* two   = new Span{start, text.size(), false};
+    Span* three = new Span{span->start + length, span->length - length, span->original};
 
-    auto it = chain.erase(span);
+    auto it = erase(span);
 
     // Insert new spans
-    it = chain.insert(it, three);
-    it = chain.insert(it, two);
-         chain.insert(it, one);
+    it = insert(it, three);
+    it = insert(it, two);
+         insert(it, one);
 }
 
 const char* Sequence::append_text(const std::string& text)
@@ -99,52 +112,77 @@ void Sequence::remove_char(std::size_t index)
     auto active = get_span(index, total);
     if (total + active->length - 1 == index)
     {
-        if (--active->length || active == chain.begin())
+        if (--active->length || active == head)
             return;
         else
-            chain.erase(active);
+            erase(active);
     }
     else
     {
         std::size_t length = active->length - (total + active->length - index);
-        Span one = {active->start, length, active->original};
-        Span two = {active->start + length + 1, active->length - length - 1, active->original };
-        auto it = chain.erase(active);
-        it = chain.insert(it, two);
+        Span* one = new Span{active->start, length, active->original};
+        Span* two = new Span{active->start + length + 1, active->length - length - 1, active->original };
+        auto it = erase(active);
+        it = insert(it, two);
 
-        if (one.length)
-            chain.insert(it, one);
+        if (one->length)
+            insert(it, one);
+        else
+            delete one;
     }
 }
 
 char Sequence::get_ch(std::size_t index)
 {
-    std::size_t total = 0;
-    auto it = get_span(index, total);
-    std::size_t length = it->length - (total + it->length - index);
-    return size ? it->start[length] : 0;
+    if (size)
+    {
+        std::size_t total = 0;
+        Span* it = get_span(index, total);
+        std::size_t length = it->length - (total + it->length - index);
+        return it == head ? it->next->start[length] : it->start[length];
+    }
+
+    return 0;
 }
 
-std::list<Span>::iterator Sequence::get_span(std::size_t index, std::size_t& total)
+Span* Sequence::get_span(std::size_t index, std::size_t& total)
 {
-    total = 0;
-    for (auto it = chain.begin(); it != chain.end(); ++it)
+    total = 0;    
+    for (Span* it = head; it->next; it = it->next)
         if (index >= total && index < total + it->length)
             return it;
         else
             total += it->length;
 
-    return chain.begin();
+    return head;
 }
 
-const std::list<Span>& Sequence::pieces()
+Span* Sequence::insert(Span* pos, Span* node)
 {
-    return chain;
+    pos->prev->next = node;
+    node->prev = pos->prev;
+    node->next = pos;
+    pos->prev = node;
+    return node;
+}
+
+Span* Sequence::erase(Span* node)
+{
+    Span* ret = node->next;
+    node->prev->next = node->next;
+    node->next->prev = node->prev;
+    delete node;
+    return ret;
+}
+
+Span* Sequence::pieces()
+{
+    return head;
 }
 
 const char* Sequence::start()
 {
-    return std::next(chain.begin())->start;
+    return head->next->start;
 }
 
 void Sequence::append_char(char ch)
@@ -161,9 +199,9 @@ void Sequence::print()
 //            std::cout << span.start[i];
 //    }
 
-    for (const auto& span : chain)
+    for (Span* it = head; it->next; it = it->next)
     {
-        std::cout << "[" << span.length << "]" << " ";
+        std::cout << "[" << it->length << "]" << " ";
     }
 
     std::cout << '\n' << std::endl;

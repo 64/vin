@@ -3,12 +3,12 @@
 
 FileBuffer::FileBuffer(const std::string& file_name, const Vec2i& _orig, FontFace* _font)
     : name(file_name), num_lines(0), cur(0, 0), orig(_orig), font(_font),
-      scroll_offset(0), num_chars(0), data(file_name), append(false), remove(false)
+      scroll_offset(0), num_chars(0), data(file_name), append(false)
 {
-    for (const auto& span : data.pieces())
-        for (std::size_t i = 0; i < span.length; ++i)
+    for (Span* it = data.pieces(); it->next; it = it->next)
+        for (std::size_t i = 0; i < it->length; ++i)
         {
-            if (span.start[i] == '\n')
+            if (it->start[i] == '\n')
                 ++num_lines;
             ++num_chars;
         }
@@ -21,10 +21,26 @@ FileBuffer::FileBuffer(const std::string& file_name, const Vec2i& _orig, FontFac
 
 void FileBuffer::save_to_file()
 {
-    data.print();
+//    data.print();
+//    if (!undo_stack.empty())
+//    {
+//        if (undo_stack.top().action == Action::INSERT)
+//        {
+//            std::size_t total;
+//            auto it = data.pieces().erase(std::prev(undo_stack.top().affect));
+//            it = data.pieces().erase(it);
+//            it = data.pieces().erase(it);
+//            data.pieces().insert(it, undo_stack.top().span);
+//            append = false;
+//        }
+//    }
+
+//    undo_stack.pop();
+
+//    data.print();
 }
 
-const std::list<Span>& FileBuffer::buffer_data()
+Span* FileBuffer::buffer_data()
 {
     return data.pieces();
 }
@@ -33,6 +49,8 @@ void FileBuffer::ins_char(unsigned int ch)
 {
     if (!append)
     {
+        std::size_t total;
+//        undo_stack.push(Operation{Action::INSERT, 0, *data.get_span(cur.offset, total), get_state(), *std::prev(data.get_span(cur.offset, total)), *std::next(data.get_span(cur.offset, total))});
         data.insert_char(cur.offset, ch);
         append = true;
     }
@@ -155,9 +173,6 @@ void FileBuffer::backspace()
     append = false;
     if (cur.offset > 0)
     {
-        if (!remove)
-            remove = true;
-
         backward();
 
         if (ch() == '\n')
@@ -174,6 +189,7 @@ void FileBuffer::new_line()
     ++num_chars;
     ++num_lines;
     forward();
+    append = false;
 }
 
 std::pair<int, int> FileBuffer::line_width()
@@ -193,7 +209,9 @@ std::pair<int, int> FileBuffer::line_width()
 
         if (length-- == 0)
         {
-            --it;
+            it = it->prev;
+            if (it->length == 0)
+                break;
             length = it->length - 1;
         }
     }
@@ -213,7 +231,7 @@ void FileBuffer::jump_to_caret()
 
 void FileBuffer::move_pos(Move dir)
 {
-    append = remove = false;
+    append = false;
     switch (dir)
     {
         case Move::UP:
@@ -260,5 +278,17 @@ int FileBuffer::ch(int offset)
 int& FileBuffer::offset()
 {
     return scroll_offset;
+}
+
+void FileBuffer::set_state(const BufferState& state)
+{
+    cur       = state.cur;
+    num_lines = state.num_lines;
+    num_chars = state.num_chars;
+}
+
+BufferState FileBuffer::get_state()
+{
+    return BufferState{cur, num_lines, num_chars};
 }
 
